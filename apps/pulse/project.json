@@ -1,29 +1,29 @@
 {
-  "name": "wealth-trace-app",
+  "name": "pulse",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "projectType": "application",
   "prefix": "app",
-  "sourceRoot": "apps/wealth-trace-app/src",
+  "sourceRoot": "apps/pulse/src",
   "tags": [],
   "targets": {
     "build": {
       "executor": "@angular/build:application",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/apps/wealth-trace-app",
-        "browser": "apps/wealth-trace-app/src/main.ts",
-        "tsConfig": "apps/wealth-trace-app/tsconfig.app.json",
+        "outputPath": "dist/apps/pulse",
+        "browser": "apps/pulse/src/main.ts",
+        "tsConfig": "apps/pulse/tsconfig.app.json",
         "inlineStyleLanguage": "scss",
         "assets": [
           {
             "glob": "**/*",
-            "input": "apps/wealth-trace-app/public"
+            "input": "apps/pulse/public"
           }
         ],
-        "styles": ["apps/wealth-trace-app/src/styles.scss"],
-        "server": "apps/wealth-trace-app/src/main.server.ts",
+        "styles": ["apps/pulse/src/styles.scss"],
+        "server": "apps/pulse/src/main.server.ts",
         "ssr": {
-          "entry": "apps/wealth-trace-app/src/server.ts"
+          "entry": "apps/pulse/src/server.ts"
         },
         "outputMode": "server"
       },
@@ -56,10 +56,10 @@
       "executor": "@angular/build:dev-server",
       "configurations": {
         "production": {
-          "buildTarget": "wealth-trace-app:build:production"
+          "buildTarget": "pulse:build:production"
         },
         "development": {
-          "buildTarget": "wealth-trace-app:build:development"
+          "buildTarget": "pulse:build:development"
         }
       },
       "defaultConfiguration": "development"
@@ -75,8 +75,8 @@
       "continuous": true,
       "executor": "@nx/web:file-server",
       "options": {
-        "buildTarget": "wealth-trace-app:build",
-        "staticFilePath": "dist/apps/wealth-trace-app/browser",
+        "buildTarget": "pulse:build",
+        "staticFilePath": "dist/apps/pulse/browser",
         "spa": true
       }
     }

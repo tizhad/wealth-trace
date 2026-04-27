@@ -9,5 +9,5 @@ import { RouterOutlet } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class App {
-  protected readonly title = signal('WealthTrace');
+  protected readonly title = signal('Pulse');
 }
