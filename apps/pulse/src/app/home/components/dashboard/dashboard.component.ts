@@ -58,6 +58,7 @@ export class DashboardComponent implements OnInit {
   // Gold form
   readonly goldKarat = signal<GoldKarat>(18);
   readonly goldGrams = signal('');
+  readonly goldDescription = signal('');
 
   // Crypto form
   readonly topCoins = signal<CoinMarket[]>([]);
@@ -65,6 +66,7 @@ export class DashboardComponent implements OnInit {
   readonly cryptoQuery = signal('');
   readonly selectedCoin = signal<CoinMarket | null>(null);
   readonly cryptoAmount = signal('');
+  readonly cryptoDescription = signal('');
   readonly dropdownOpen = signal(false);
 
   // Coins shown in dropdown — filtered from top 100 as user types
@@ -223,6 +225,14 @@ export class DashboardComponent implements OnInit {
     this.goldGrams.set((event.target as HTMLInputElement).value);
   }
 
+  onGoldDescriptionInput(event: Event): void {
+    this.goldDescription.set((event.target as HTMLInputElement).value);
+  }
+
+  onCryptoDescriptionInput(event: Event): void {
+    this.cryptoDescription.set((event.target as HTMLInputElement).value);
+  }
+
   onCryptoQueryInput(event: Event): void {
     const val = (event.target as HTMLInputElement).value;
     this.cryptoQuery.set(val);
@@ -254,8 +264,9 @@ export class DashboardComponent implements OnInit {
   addGold(): void {
     const grams = parseFloat(this.goldGrams());
     if (!grams || grams <= 0) return;
-    this.assetService.addGold(this.goldKarat(), grams);
+    this.assetService.addGold(this.goldKarat(), grams, this.goldDescription());
     this.goldGrams.set('');
+    this.goldDescription.set('');
     this.showPanel.set(false);
     this.refreshPrices();
   }
@@ -265,11 +276,12 @@ export class DashboardComponent implements OnInit {
     const amount = parseFloat(this.cryptoAmount());
     if (!coin || !amount || amount <= 0) return;
     this.assetService.addCrypto(
-      coin.id, coin.name, coin.symbol, coin.image, amount
+      coin.id, coin.name, coin.symbol, coin.image, amount, this.cryptoDescription()
     );
     this.selectedCoin.set(null);
     this.cryptoQuery.set('');
     this.cryptoAmount.set('');
+    this.cryptoDescription.set('');
     this.showPanel.set(false);
     this.refreshPrices();
   }

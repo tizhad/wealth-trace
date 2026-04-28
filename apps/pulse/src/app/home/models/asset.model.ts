@@ -25,6 +25,8 @@ export interface GoldHolding {
   type: 'gold';
   karat: GoldKarat;
   grams: number;
+  // Where the asset is held — e.g. "Physical (safe)", "Bank vault", "Jewellery"
+  description?: string;
   addedAt: string;
 }
 
@@ -36,6 +38,8 @@ export interface CryptoHolding {
   coinSymbol: string;
   coinImage: string;
   amount: number;
+  // Where the asset is held — e.g. "Binance", "Ledger hardware wallet", "Coinbase"
+  description?: string;
   addedAt: string;
 }
 

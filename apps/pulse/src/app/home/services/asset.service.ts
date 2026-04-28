@@ -29,12 +29,13 @@ export class AssetService {
     }
   }
 
-  addGold(karat: GoldKarat, grams: number): void {
+  addGold(karat: GoldKarat, grams: number, description?: string): void {
     const h: GoldHolding = {
       id: this.uid(),
       type: 'gold',
       karat,
       grams,
+      description: description?.trim() || undefined,
       addedAt: new Date().toISOString(),
     };
     this._holdings.update(hs => [...hs, h]);
@@ -46,7 +47,8 @@ export class AssetService {
     coinName: string,
     coinSymbol: string,
     coinImage: string,
-    amount: number
+    amount: number,
+    description?: string
   ): void {
     const h: CryptoHolding = {
       id: this.uid(),
@@ -56,6 +58,7 @@ export class AssetService {
       coinSymbol,
       coinImage,
       amount,
+      description: description?.trim() || undefined,
       addedAt: new Date().toISOString(),
     };
     this._holdings.update(hs => [...hs, h]);

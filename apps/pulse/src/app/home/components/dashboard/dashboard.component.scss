@@ -105,6 +105,12 @@
 
 .form-group--grow { flex: 1; }
 
+.form-label--optional {
+  font-weight: 400;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+}
+
 .preview-row {
   display: flex;
   align-items: center;
@@ -326,6 +332,20 @@
     font-size: 0.75rem;
     color: var(--text-muted);
     margin-top: 0.1rem;
+  }
+
+  &__desc {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    margin-top: 0.15rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    &::before {
+      content: '📍';
+      font-size: 0.7rem;
+    }
   }
 
   &__right {
