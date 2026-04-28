@@ -41,11 +41,11 @@
     </div>
 
     <!-- card-scene--rich gives extra height when the card has embedded images -->
-    <div class="card-scene" [class.card-scene--rich]="!!currentCard()!.frontHtml">
+    <div class="card-scene" [class.card-scene--rich]="hasRichContent()">
       <div class="flashcard" [class.flashcard--flipped]="isFlipped()" (click)="!isFlipped() && flip()">
 
         <div class="flashcard__face flashcard__face--front">
-          @if (currentCard()!.frontHtml) {
+          @if (hasRichContent()) {
             <!-- Rich Anki HTML with resolved image URLs -->
             <div class="anki-content" [innerHTML]="resolvedFrontHtml()"></div>
           } @else {
@@ -55,7 +55,7 @@
         </div>
 
         <div class="flashcard__face flashcard__face--back">
-          @if (currentCard()!.backHtml) {
+          @if (hasRichContent()) {
             <!-- Show the answer HTML; front context is implied from the visible front face -->
             <div class="anki-content" [innerHTML]="resolvedBackHtml()"></div>
           } @else {

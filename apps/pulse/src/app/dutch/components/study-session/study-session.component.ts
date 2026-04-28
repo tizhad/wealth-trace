@@ -37,12 +37,22 @@ export class StudySessionComponent implements OnInit {
   readonly isFlipped = signal(false);
   readonly stats = signal({ again: 0, hard: 0, good: 0, easy: 0 });
 
-  // Resolved HTML with <img src="filename"> replaced by IndexedDB object URLs.
-  // Set asynchronously via the effect below whenever the current card changes.
+  // Card HTML loaded from IndexedDB on session start (set empty = no rich content)
+  private cardCss = '';
+  readonly cardHtmlMap = signal(new Map<string, { f: string; b: string }>());
+
+  // Resolved HTML with object URLs substituted for <img> filenames
   readonly resolvedFrontHtml = signal<SafeHtml>('');
   readonly resolvedBackHtml = signal<SafeHtml>('');
 
   readonly currentCard = computed(() => this.queue()[0] ?? null);
+
+  // True when the current card has rich Anki HTML stored in IndexedDB
+  readonly hasRichContent = computed(() => {
+    const card = this.currentCard();
+    return card ? this.cardHtmlMap().has(card.id) : false;
+  });
+
   readonly isComplete = computed(
     () => this.queue().length === 0 && this.reviewedCount() > 0
   );
@@ -55,45 +65,62 @@ export class StudySessionComponent implements OnInit {
   });
 
   constructor() {
-    // Resolve image URLs whenever the current card changes.
-    // effect() must be called in the constructor to have an injection context.
+    // Resolve image URLs from IndexedDB whenever the current card changes.
+    // effect() must run in the constructor to have an Angular injection context.
     effect(() => {
       const card = this.currentCard();
-      if (!card) {
+      const map = this.cardHtmlMap();
+
+      if (!card || !map.size) {
         this.resolvedFrontHtml.set('');
         this.resolvedBackHtml.set('');
         return;
       }
 
-      if (card.frontHtml) {
-        this.mediaService
-          .resolveImageSrcs(this.deckId, card.frontHtml)
-          .then((html) =>
-            this.resolvedFrontHtml.set(this.sanitizer.bypassSecurityTrustHtml(html))
-          );
+      const html = map.get(card.id);
+      if (!html) {
+        this.resolvedFrontHtml.set('');
+        this.resolvedBackHtml.set('');
+        return;
       }
 
-      if (card.backHtml) {
-        this.mediaService
-          .resolveImageSrcs(this.deckId, card.backHtml)
-          .then((html) =>
-            this.resolvedBackHtml.set(this.sanitizer.bypassSecurityTrustHtml(html))
-          );
-      }
+      // Prepend the deck's model CSS once per card render
+      const css = this.cardCss ? `<style>${this.cardCss}</style>` : '';
+
+      this.mediaService
+        .resolveImageSrcs(this.deckId, `${css}${html.f}`)
+        .then(resolved =>
+          this.resolvedFrontHtml.set(this.sanitizer.bypassSecurityTrustHtml(resolved))
+        );
+
+      this.mediaService
+        .resolveImageSrcs(this.deckId, `${css}${html.b}`)
+        .then(resolved =>
+          this.resolvedBackHtml.set(this.sanitizer.bypassSecurityTrustHtml(resolved))
+        );
     });
   }
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     if (!this.deck()) {
       this.router.navigate(['/dutch']);
       return;
     }
+
     const due = this.deckService.getDueCards(this.deckId);
     const newCards = this.deckService.getNewCards(this.deckId).slice(0, 20);
     this.queue.set([...due, ...newCards]);
 
     if (this.queue().length === 0) {
       this.router.navigate(['/dutch']);
+      return;
+    }
+
+    // Load Anki card HTML from IndexedDB (only present for .apkg-imported decks)
+    const htmlData = await this.mediaService.fetchCardHtml(this.deckId);
+    if (htmlData) {
+      this.cardCss = htmlData.css;
+      this.cardHtmlMap.set(htmlData.cards);
     }
   }
 
