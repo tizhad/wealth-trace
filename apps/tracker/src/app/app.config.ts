@@ -3,13 +3,15 @@ import {
   provideBrowserGlobalErrorListeners,
   provideZonelessChangeDetection,
 } from '@angular/core';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withComponentInputBinding } from '@angular/router';
+import { provideAnimations } from '@angular/platform-browser/animations';
 import { appRoutes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZonelessChangeDetection(),
     provideBrowserGlobalErrorListeners(),
-    provideRouter(appRoutes),
+    provideAnimations(),
+    provideRouter(appRoutes, withComponentInputBinding()),
   ],
 };
