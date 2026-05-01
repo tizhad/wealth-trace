@@ -1,82 +1,104 @@
-/* ── CSS custom properties ─────────────────────────────────────────────── */
 :root {
   /* surfaces */
-  --color-bg:             #f0f4f8;
-  --color-surface:        #ffffff;
-  --color-surface-hover:  #f7fafc;
-  --color-border:         #e2e8f0;
+  --bg:                 #F9F7F4;
+  --surface:            #FFFFFF;
+  --surface-hover:      #F5F3F0;
+  --border:             #EAE6E0;
+
+  /* sidebar */
+  --sidebar-bg:         #FFFFFF;
+  --sidebar-width:      224px;
+  --nav-active-bg:      #EEECFF;
+  --nav-active-text:    #5B4FCF;
+  --nav-text:           #4A4A68;
+  --nav-text-hover:     #1C1C3A;
 
   /* text */
-  --color-text:           #1a202c;
-  --color-text-muted:     #718096;
+  --text:               #1C1C3A;
+  --text-secondary:     #6B6B8A;
+  --text-muted:         #9898B3;
 
-  /* tags */
-  --color-study:          #4299e1;
-  --color-study-bg:       #ebf8ff;
-  --color-project:        #ed8936;
-  --color-project-bg:     #fffaf0;
+  /* accent */
+  --accent:             #6C5CE7;
+  --accent-light:       #EEECFF;
+  --accent-hover:       #5A4BD1;
+  --accent-text:        #FFFFFF;
 
-  /* progress */
-  --color-progress-track: #e2e8f0;
-  --color-progress-fill:  #48bb78;
+  /* status */
+  --status-progress-bg:   #EEF0FF;
+  --status-progress-text: #5B5FC7;
+  --status-done-bg:       #E6F4EA;
+  --status-done-text:     #276D3F;
+  --status-todo-bg:       #F4F4F7;
+  --status-todo-text:     #6B6B8A;
 
-  /* company statuses */
-  --color-not-applied:    #a0aec0;
-  --color-applied:        #4299e1;
-  --color-interview:      #ed8936;
-  --color-offer:          #48bb78;
-  --color-rejected:       #fc8181;
+  /* priority */
+  --priority-critical-bg:   #FFEEEE;
+  --priority-critical-text: #C93B3B;
+  --priority-high-bg:       #FFF3E8;
+  --priority-high-text:     #C0621A;
+  --priority-medium-bg:     #FFFBE8;
+  --priority-medium-text:   #A07C10;
 
-  /* resume fix urgency */
-  --color-critical:       #fc8181;
-  --color-critical-bg:    #fff5f5;
-  --color-warning:        #d69e2e;
-  --color-warning-bg:     #fffff0;
-  --color-resolved:       #68d391;
-  --color-resolved-bg:    #f0fff4;
+  /* pipeline statuses */
+  --pipe-saved:       #9898B3;
+  --pipe-applied:     #4A90E2;
+  --pipe-phone:       #9B59B6;
+  --pipe-interview:   #2E86AB;
+  --pipe-offer:       #27AE60;
+  --pipe-rejected:    #E05252;
+  --pipe-noreply:     #BCBCCC;
 
-  /* tabs */
-  --color-tab-active:     #4299e1;
-  --color-tab-text:       #4a5568;
+  /* streak */
+  --streak-from:      #FF8C52;
+  --streak-to:        #FF5F87;
 
   /* misc */
-  --radius:               8px;
-  --radius-sm:            4px;
-  --transition:           180ms ease;
-  --shadow-sm:            0 1px 3px rgba(0, 0, 0, 0.08);
+  --radius-sm:        6px;
+  --radius:           12px;
+  --radius-lg:        16px;
+  --shadow-sm:        0 1px 3px rgba(0,0,0,0.06);
+  --shadow:           0 4px 12px rgba(0,0,0,0.06);
+  --transition:       140ms ease;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg:             #1a202c;
-    --color-surface:        #2d3748;
-    --color-surface-hover:  #3a4a5c;
-    --color-border:         #4a5568;
-    --color-text:           #f7fafc;
-    --color-text-muted:     #a0aec0;
-    --color-progress-track: #4a5568;
-    --color-study-bg:       #1a365d;
-    --color-project-bg:     #3d2a14;
-    --color-critical-bg:    #3d1414;
-    --color-warning-bg:     #3d3214;
-    --color-resolved-bg:    #143d1e;
-    --color-tab-text:       #a0aec0;
-    --shadow-sm:            0 1px 3px rgba(0, 0, 0, 0.3);
+    --bg:                #18181F;
+    --surface:           #24242E;
+    --surface-hover:     #2E2E3A;
+    --border:            #35354A;
+    --sidebar-bg:        #1E1E28;
+    --nav-active-bg:     #2D2A4A;
+    --nav-active-text:   #9B8EFF;
+    --nav-text:          #A0A0C0;
+    --nav-text-hover:    #FFFFFF;
+    --text:              #F0F0FA;
+    --text-secondary:    #A0A0C0;
+    --text-muted:        #6868A0;
+    --accent:            #8B7EFF;
+    --accent-light:      #2D2A4A;
+    --accent-hover:      #7A6EEE;
+    --shadow-sm:         0 1px 3px rgba(0,0,0,0.3);
+    --shadow:            0 4px 12px rgba(0,0,0,0.3);
   }
 }
 
-/* ── Reset ─────────────────────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+html, body {
+  height: 100%;
+}
+
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: var(--color-bg);
-  color: var(--color-text);
-  line-height: 1.6;
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -85,4 +107,84 @@ button {
   cursor: pointer;
   border: none;
   background: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+input, textarea {
+  font-family: inherit;
+}
+
+/* ── Shared badge utilities ──────────────────────────────────────────────── */
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+
+  &.status-progress  { background: var(--status-progress-bg);  color: var(--status-progress-text); }
+  &.status-done      { background: var(--status-done-bg);      color: var(--status-done-text); }
+  &.status-todo      { background: var(--status-todo-bg);      color: var(--status-todo-text); }
+
+  &.priority-critical { background: var(--priority-critical-bg); color: var(--priority-critical-text); }
+  &.priority-high     { background: var(--priority-high-bg);     color: var(--priority-high-text); }
+  &.priority-medium   { background: var(--priority-medium-bg);   color: var(--priority-medium-text); }
+
+  &.pipe-saved        { background: #F4F4F7; color: var(--pipe-saved); }
+  &.pipe-applied      { background: #EAF3FD; color: var(--pipe-applied); }
+  &.pipe-phone        { background: #F5EEFF; color: var(--pipe-phone); }
+  &.pipe-interview    { background: #E8F6FB; color: var(--pipe-interview); }
+  &.pipe-offer        { background: #E6F4EA; color: var(--pipe-offer); }
+  &.pipe-rejected     { background: #FFEEEE; color: var(--pipe-rejected); }
+  &.pipe-noreply      { background: #F4F4F7; color: var(--pipe-noreply); }
+}
+
+/* ── Shared card ─────────────────────────────────────────────────────────── */
+
+.card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ── Shared btn ──────────────────────────────────────────────────────────── */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--accent);
+  color: var(--accent-text);
+  border-radius: var(--radius-sm);
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: background var(--transition);
+
+  &:hover { background: var(--accent-hover); }
+}
+
+/* ── Code block ──────────────────────────────────────────────────────────── */
+
+.code-block {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 11.5px;
+  background: var(--surface-hover);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  overflow-x: auto;
+  white-space: pre;
+  line-height: 1.7;
+  color: var(--text);
 }
