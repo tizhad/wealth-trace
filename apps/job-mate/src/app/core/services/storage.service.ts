@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-const PREFIX = 'jobmate_v1';
+const PREFIX = 'jobmate_v2';
 
 @Injectable({ providedIn: 'root' })
 export class StorageService {

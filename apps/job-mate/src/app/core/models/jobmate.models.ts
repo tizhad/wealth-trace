@@ -17,14 +17,27 @@ export type AppStatus =
   | 'offer'
   | 'rejected';
 
+export interface Content {
+  title?: string;
+  description?: string;
+  code?: string;
+}
+
+export interface QA {
+  question: string;
+  answer: string;
+  difficulty?: 'easy' | 'medium' | 'hard';
+}
+
 export interface Subject {
   id: string;
   name: string;
-  qaCount: number;
-  companies: string[];
+  companies?: string[];
   status: SubjectStatus;
   priority: SubjectPriority;
-  potential: number;
+  potential?: number;
+  content?: Content[];
+  qa?: QA[];
 }
 
 export interface Company {

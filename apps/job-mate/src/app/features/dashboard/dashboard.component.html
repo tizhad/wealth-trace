@@ -121,7 +121,7 @@
           <div class="focus-info">
             <span class="focus-name">{{ subject.name }}</span>
             <span class="focus-meta"
-              >{{ subject.qaCount }} questions ·
+              >{{ subject.qa?.length ?? 0 }} questions ·
               {{ subject.companies?.join(', ') }}</span
             >
           </div>

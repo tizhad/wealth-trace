@@ -30,7 +30,7 @@
         opt of [
           { key: 'potential', label: 'Potential' },
           { key: 'name', label: 'Name' },
-          { key: 'qaCount', label: 'Q&A count' },
+          { key: 'qa', label: 'Q&A count' },
         ];
         track opt.key
       ) {
@@ -63,7 +63,7 @@
         <div class="subject-cell">
           <div class="subject-name">{{ subject.name }}</div>
           <div class="subject-meta">
-            {{ subject.qaCount }} Q&amp;A
+            {{ subject.qa?.length ?? 0 }} Q&amp;A
             @for (company of subject.companies; track company) {
               <span class="company-tag">{{ company }}</span>
             }

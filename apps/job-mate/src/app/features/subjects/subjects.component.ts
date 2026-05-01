@@ -8,7 +8,7 @@ import { RouterLink } from '@angular/router';
 import { StateService } from '../../core/services/state.service';
 import { SubjectStatus } from '../../core/models/jobmate.models';
 
-type SortKey = 'potential' | 'name' | 'qaCount';
+type SortKey = 'potential' | 'name' | 'qa';
 
 @Component({
   selector: 'app-subjects',
