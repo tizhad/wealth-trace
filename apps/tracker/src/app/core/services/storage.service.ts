@@ -9,6 +9,7 @@ export class StorageService {
       const raw = localStorage.getItem(`${PREFIX}:${key}`);
       return raw ? (JSON.parse(raw) as T) : null;
     } catch {
+      console.error(`Error occurred while loading from storage: ${key}`);
       return null;
     }
   }
@@ -17,6 +18,7 @@ export class StorageService {
     try {
       localStorage.setItem(`${PREFIX}:${key}`, JSON.stringify(value));
     } catch {
+      console.error(`Error occurred while saving to storage: ${key}`);
       // Storage quota exceeded or private-browsing restriction — fail silently
     }
   }
@@ -25,6 +27,7 @@ export class StorageService {
     try {
       localStorage.removeItem(`${PREFIX}:${key}`);
     } catch {
+      console.error(`Error occurred while clearing storage: ${key}`);
       // ignore
     }
   }

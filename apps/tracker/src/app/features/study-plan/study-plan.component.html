@@ -1,0 +1,37 @@
+<section class="study-plan">
+  <h2 class="page-title">Study Plan</h2>
+
+  <div class="weeks">
+    @for (week of weeks(); track week.id) {
+      <div class="week-card">
+
+        <button class="week-header" (click)="toggleWeek(week.id)">
+          <div class="week-header-left">
+            <span class="chevron" [class.open]="isExpanded(week.id)">&#9656;</span>
+            <span class="week-label">{{ week.label }}</span>
+          </div>
+          <span class="week-count">
+            {{ doneCount(week.id) }} / {{ week.tasks.length }}
+          </span>
+        </button>
+
+        <div class="week-progress">
+          <app-progress-bar [percent]="weekPercent(week.id)" />
+          <span class="week-pct">{{ weekPercent(week.id) }}%</span>
+        </div>
+
+        @if (isExpanded(week.id)) {
+          <div class="task-list" @expandCollapse>
+            @for (task of week.tasks; track task.id) {
+              <app-task-item
+                [task]="task"
+                (toggled)="onToggle(week.id, task.id)"
+              />
+            }
+          </div>
+        }
+
+      </div>
+    }
+  </div>
+</section>
