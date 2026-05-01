@@ -1,0 +1,51 @@
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+
+  &:hover {
+    background: var(--color-surface-hover);
+  }
+
+  &.done .task-label {
+    text-decoration: line-through;
+    color: var(--color-text-muted);
+  }
+}
+
+.task-checkbox {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  accent-color: var(--color-progress-fill);
+  cursor: pointer;
+}
+
+.task-label {
+  flex: 1;
+  font-size: 0.9rem;
+  transition: color var(--transition);
+}
+
+.task-tag {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  border-radius: 99px;
+
+  &.tag-study {
+    color: var(--color-study);
+    background: var(--color-study-bg);
+  }
+
+  &.tag-project {
+    color: var(--color-project);
+    background: var(--color-project-bg);
+  }
+}
