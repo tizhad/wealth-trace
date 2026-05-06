@@ -1,5 +1,7 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { NavigationEnd, Router, RouterModule } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -8,4 +10,14 @@ import { RouterModule } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [RouterModule],
 })
-export class App {}
+export class App {
+  private readonly router = inject(Router);
+
+  readonly showShell = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map(e => e.urlAfterRedirects !== '/'),
+    ),
+    { initialValue: this.router.url !== '/' },
+  );
+}
