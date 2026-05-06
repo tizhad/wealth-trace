@@ -9,7 +9,15 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
 })
 export class LandingComponent {
-  readonly trustedBy = ['Stripe', 'Linear', 'Notion', 'Figma', 'Vercel', 'Airbnb', 'Datadog'];
+  readonly trustedBy = [
+    'Stripe',
+    'Linear',
+    'Notion',
+    'Figma',
+    'Vercel',
+    'Airbnb',
+    'Datadog',
+  ];
 
   readonly features = [
     {
