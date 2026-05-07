@@ -13,7 +13,7 @@
   </div>
 
   <div class="companies-grid">
-    @for (company of state.companies(); track company.id) {
+    @for (company of store.companies(); track company.id) {
       <div class="card company-card">
         <div class="company-top">
           <div class="company-avatar"
@@ -27,12 +27,12 @@
         </div>
         <div class="company-stats">
           <div class="stat">
-            <span class="stat-num">{{ company.linkedSubjects }}</span>
+            <span class="stat-num">—</span>
             <span class="stat-label">Linked subjects</span>
           </div>
           <div class="stat-divider"></div>
           <div class="stat">
-            <span class="stat-num">{{ company.applications }}</span>
+            <span class="stat-num">—</span>
             <span class="stat-label">Applications</span>
           </div>
         </div>

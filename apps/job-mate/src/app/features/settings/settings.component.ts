@@ -1,19 +1,21 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { StateService } from '../../core/services/state.service';
-import { UserSettings } from '../../core/models/jobmate.models';
+import { Router } from '@angular/router';
+import { SettingsStore } from '../../core/stores/settings.store';
+import { AuthService } from '../../core/services/auth.service';
+import type { UserSettings } from '../../core/models/jobmate.models';
 
 @Component({
   selector: 'app-settings',
   templateUrl: './settings.component.html',
   styleUrl: './settings.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [FormsModule],
 })
 export class SettingsComponent {
-  readonly state = inject(StateService);
+  readonly settingsStore = inject(SettingsStore);
+  readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
-  readonly displayName = signal(this.state.settings().displayName);
+  readonly displayName = signal(this.settingsStore.settings()?.displayName ?? '');
 
   readonly accents: { key: UserSettings['accent']; label: string; color: string }[] = [
     { key: 'indigo', label: 'Indigo', color: '#6C5CE7' },
@@ -21,15 +23,21 @@ export class SettingsComponent {
     { key: 'mint',   label: 'Mint',   color: '#00BFA5' },
   ];
 
-  saveDisplayName(): void {
-    this.state.updateDisplayName(this.displayName());
+  async saveDisplayName(): Promise<void> {
+    await this.settingsStore.upsert({ displayName: this.displayName() ?? null });
   }
 
-  setAccent(key: UserSettings['accent']): void {
-    this.state.updateAccent(key);
+  async setAccent(key: UserSettings['accent']): Promise<void> {
+    await this.settingsStore.upsert({ accent: key });
   }
 
   initial(): string {
-    return this.state.settings().displayName.charAt(0).toUpperCase();
+    const name = this.settingsStore.settings()?.displayName ?? this.auth.user()?.email ?? '?';
+    return name.charAt(0).toUpperCase();
+  }
+
+  async signOut(): Promise<void> {
+    await this.auth.signOut();
+    await this.router.navigate(['/auth']);
   }
 }

@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { StateService } from '../../core/services/state.service';
+import { ApplicationStore } from '../../core/stores/application.store';
 import { Application, AppStatus } from '../../core/models/jobmate.models';
 
 @Component({
@@ -11,7 +11,19 @@ import { Application, AppStatus } from '../../core/models/jobmate.models';
   imports: [ReactiveFormsModule],
 })
 export class ApplicationsComponent {
-  readonly state = inject(StateService);
+  readonly store = inject(ApplicationStore);
+
+  readonly applicationsByStatus = computed(() => {
+    const apps = this.store.applications();
+    return {
+      saved: apps.filter(a => a.status === 'saved'),
+      applied: apps.filter(a => a.status === 'applied'),
+      phoneScreen: apps.filter(a => a.status === 'phone-screen'),
+      interviewing: apps.filter(a => a.status === 'interviewing'),
+      offer: apps.filter(a => a.status === 'offer'),
+      rejected: apps.filter(a => a.status === 'rejected'),
+    };
+  });
 
   readonly columns: { key: string; label: string }[] = [
     { key: 'saved', label: 'Saved' },
@@ -75,27 +87,25 @@ export class ApplicationsComponent {
     }
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
 
     const { title, company, location, status, date, salary } = this.form.getRawValue();
-    this.state.addApplication({
+    await this.store.addApplication({
       title,
       company,
-      location,
+      location: location || null,
       status,
       date,
-      salary: salary.trim() || undefined,
-      tags: this.tags().length ? this.tags() : undefined,
+      salary: salary.trim() || null,
+      tags: this.tags(),
     });
     this.closeForm();
   }
 
   colApps(key: string): Application[] {
-    return (
-      (this.state.applicationsByStatus() as Record<string, Application[]>)[key] ?? []
-    );
+    return (this.applicationsByStatus() as Record<string, Application[]>)[key] ?? [];
   }
 
   colClass(key: string): string {

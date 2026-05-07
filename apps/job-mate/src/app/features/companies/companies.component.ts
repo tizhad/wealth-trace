@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { StateService } from '../../core/services/state.service';
+import { CompanyStore } from '../../core/stores/company.store';
 import { CompanyStatus } from '../../core/models/jobmate.models';
 
 const AVATAR_PALETTE: ReadonlyArray<{ bg: string; color: string }> = [
@@ -20,7 +20,7 @@ const AVATAR_PALETTE: ReadonlyArray<{ bg: string; color: string }> = [
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CompaniesComponent {
-  readonly state = inject(StateService);
+  readonly store = inject(CompanyStore);
 
   initial(name: string): string {
     return name.charAt(0).toUpperCase();

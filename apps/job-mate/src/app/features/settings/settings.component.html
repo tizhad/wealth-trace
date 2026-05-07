@@ -11,8 +11,8 @@
       <div class="profile-row">
         <div class="profile-avatar">{{ initial() }}</div>
         <div class="profile-info">
-          <span class="profile-name">{{ state.settings().displayName }}</span>
-          <span class="profile-email">{{ state.settings().email }}</span>
+          <span class="profile-name">{{ settingsStore.settings()?.displayName ?? auth.user()?.email }}</span>
+          <span class="profile-email">{{ auth.user()?.email }}</span>
         </div>
       </div>
       <div class="field">
@@ -21,8 +21,8 @@
           id="display-name"
           class="field-input"
           type="text"
-          [ngModel]="displayName()"
-          (ngModelChange)="displayName.set($event)"
+          [value]="displayName()"
+          (input)="displayName.set($any($event.target).value)"
           (blur)="saveDisplayName()"
         />
       </div>
@@ -35,7 +35,7 @@
         @for (accent of accents; track accent.key) {
           <button
             class="accent-swatch"
-            [class.selected]="state.settings().accent === accent.key"
+            [class.selected]="settingsStore.settings()?.accent === accent.key"
             [style.background]="accent.color"
             (click)="setAccent(accent.key)"
             [attr.aria-label]="accent.label"
@@ -45,12 +45,11 @@
       </div>
     </div>
 
-    <!-- Data -->
+    <!-- Account -->
     <div class="card settings-card">
-      <h2 class="card-title">Data</h2>
+      <h2 class="card-title">Account</h2>
       <div class="data-actions">
-        <button class="btn-secondary">Export data (JSON)</button>
-        <button class="btn-danger">Sign out</button>
+        <button class="btn-danger" (click)="signOut()">Sign out</button>
       </div>
     </div>
   </div>

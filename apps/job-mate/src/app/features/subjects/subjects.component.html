@@ -29,7 +29,7 @@
       @for (
         opt of [
           { key: 'priority', label: 'Priority' },
-          { key: 'name', label: 'Name' },
+          { key: 'title', label: 'Title' },
           { key: 'qa', label: 'Q&A count' },
         ];
         track opt.key
@@ -44,7 +44,7 @@
       }
     </div>
     <div class="subject-count">
-      <strong>{{ state.totalSubjects() }}</strong> subjects
+      <strong>{{ store.filtered().length }}</strong> subjects
     </div>
   </div>
 
@@ -56,14 +56,14 @@
       <span>PRIORITY</span>
     </div>
 
-    @for (subject of state.subjects(); track subject.id) {
+    @for (subject of store.filtered(); track subject.id) {
       <a [routerLink]="['/subjects', subject.id]" class="table-row">
         <div class="subject-cell">
-          <div class="subject-name">{{ subject.name }}</div>
+          <div class="subject-name">{{ subject.title }}</div>
           <div class="subject-meta">
-            {{ subject.qa?.length ?? 0 }} Q&amp;A
-            @for (company of subject.companies; track company) {
-              <span class="company-tag">{{ company }}</span>
+            {{ subject.qa.length }} Q&amp;A
+            @for (ct of subject.companyTags; track ct.id) {
+              <span class="company-tag">{{ ct.name }}</span>
             }
           </div>
         </div>
@@ -109,34 +109,36 @@
     </div>
 
     <div class="drawer-body">
-      <!-- Name -->
+      <!-- Title -->
       <div class="field">
-        <label class="field-label" for="sub-name">
-          Name <span class="required">*</span>
+        <label class="field-label" for="sub-title">
+          Title <span class="required">*</span>
         </label>
         <input
-          id="sub-name"
+          id="sub-title"
           class="field-input"
           type="text"
           placeholder="e.g. Dynamic Programming"
-          formControlName="name"
+          formControlName="title"
         />
-        @if (
-          form.controls.name.touched && form.controls.name.hasError('required')
-        ) {
+        @if (form.controls.title.touched && form.controls.title.hasError('required')) {
           <span class="field-error">Required</span>
         }
       </div>
 
-      <!-- Priority + Status -->
+      <!-- Category + Priority + Status -->
       <div class="field-row">
         <div class="field">
+          <label class="field-label" for="sub-category">Category</label>
+          <select id="sub-category" class="field-input" formControlName="category">
+            @for (opt of categoryOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+        <div class="field">
           <label class="field-label" for="sub-priority">Priority</label>
-          <select
-            id="sub-priority"
-            class="field-input"
-            formControlName="priority"
-          >
+          <select id="sub-priority" class="field-input" formControlName="priority">
             @for (opt of priorityOptions; track opt.value) {
               <option [value]="opt.value">{{ opt.label }}</option>
             }
@@ -150,12 +152,6 @@
             }
           </select>
         </div>
-      </div>
-
-      <!-- Notes (rich editor) -->
-      <div class="field">
-        <label class="field-label">Notes</label>
-        <app-rich-editor [(value)]="notesHtml" />
       </div>
 
       <!-- Companies -->

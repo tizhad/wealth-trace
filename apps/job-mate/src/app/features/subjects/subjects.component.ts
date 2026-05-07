@@ -11,51 +11,66 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
-import { StateService } from '../../core/services/state.service';
+import { StudyStore } from '../../core/stores/study.store';
 import {
+  SubjectCategory,
   SubjectPriority,
   SubjectStatus,
 } from '../../core/models/jobmate.models';
-import { RichEditorComponent } from '../../shared/components/rich-editor/rich-editor.component';
 
-type SortKey = 'name' | 'qa' | 'status' | 'priority';
+type SortKey = 'title' | 'qa' | 'status' | 'priority';
 
 @Component({
   selector: 'app-subjects',
   templateUrl: './subjects.component.html',
   styleUrl: './subjects.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, ReactiveFormsModule, RichEditorComponent],
+  imports: [RouterLink, ReactiveFormsModule],
 })
 export class SubjectsComponent {
-  readonly state = inject(StateService);
+  readonly store = inject(StudyStore);
 
   readonly sortKey = signal<SortKey>('priority');
   readonly showForm = signal(false);
-  readonly notesHtml = signal('');
   readonly companies = signal<string[]>([]);
-
   readonly companyInput = new FormControl('', { nonNullable: true });
 
   readonly form = new FormGroup({
-    name: new FormControl('', {
+    title: new FormControl('', {
       nonNullable: true,
       validators: [Validators.required],
     }),
+    category: new FormControl<SubjectCategory>('javascript', { nonNullable: true }),
     priority: new FormControl<SubjectPriority>('medium', { nonNullable: true }),
-    status: new FormControl<SubjectStatus>('to-do', { nonNullable: true }),
+    status: new FormControl<SubjectStatus>('not_started', { nonNullable: true }),
   });
+
+  readonly categoryOptions: { value: SubjectCategory; label: string }[] = [
+    { value: 'angular', label: 'Angular' },
+    { value: 'react', label: 'React' },
+    { value: 'javascript', label: 'JavaScript' },
+    { value: 'typescript', label: 'TypeScript' },
+    { value: 'performance', label: 'Performance' },
+    { value: 'testing', label: 'Testing' },
+    { value: 'accessibility', label: 'Accessibility' },
+    { value: 'system_design', label: 'System Design' },
+    { value: 'css', label: 'CSS' },
+    { value: 'soft_skills', label: 'Soft Skills' },
+  ];
 
   readonly priorityOptions: { value: SubjectPriority; label: string }[] = [
     { value: 'critical', label: 'Critical' },
+    { value: 'high', label: 'High' },
     { value: 'medium', label: 'Medium' },
     { value: 'low', label: 'Low' },
   ];
 
   readonly statusOptions: { value: SubjectStatus; label: string }[] = [
-    { value: 'to-do', label: 'To-do' },
-    { value: 'in-progress', label: 'In progress' },
-    { value: 'done', label: 'Done' },
+    { value: 'not_started', label: 'Not started' },
+    { value: 'in_progress', label: 'In progress' },
+    { value: 'needs_review', label: 'Needs review' },
+    { value: 'confident', label: 'Confident' },
+    { value: 'mastered', label: 'Mastered' },
   ];
 
   setSort(key: SortKey): void {
@@ -63,10 +78,9 @@ export class SubjectsComponent {
   }
 
   openForm(): void {
-    this.form.reset({ priority: 'medium', status: 'to-do' });
+    this.form.reset({ category: 'javascript', priority: 'medium', status: 'not_started' });
     this.companies.set([]);
     this.companyInput.reset();
-    this.notesHtml.set('');
     this.showForm.set(true);
   }
 
@@ -77,13 +91,13 @@ export class SubjectsComponent {
   addCompany(): void {
     const val = this.companyInput.value.trim();
     if (val && !this.companies().includes(val)) {
-      this.companies.update((c) => [...c, val]);
+      this.companies.update(c => [...c, val]);
     }
     this.companyInput.reset();
   }
 
   removeCompany(name: string): void {
-    this.companies.update((c) => c.filter((x) => x !== name));
+    this.companies.update(c => c.filter(x => x !== name));
   }
 
   onCompanyKeydown(event: KeyboardEvent): void {
@@ -93,30 +107,36 @@ export class SubjectsComponent {
     }
   }
 
-  submit(): void {
+  async submit(): Promise<void> {
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
 
-    const { name, priority, status } = this.form.getRawValue();
-    this.state.addSubject({
-      name,
+    const { title, category, priority, status } = this.form.getRawValue();
+    await this.store.addSubject({
+      title,
+      summary: null,
+      category,
       priority,
       status,
-      companies: this.companies().length ? this.companies() : undefined,
-      notes: this.notesHtml().trim() || undefined,
+      confidenceScore: 1,
+      estimatedReadTime: null,
+      tags: this.companies(),
+      sourceUrl: null,
     });
     this.closeForm();
   }
 
   statusClass(status: SubjectStatus): string {
-    return `status-${status}`;
+    return `status-${status.replace('_', '-')}`;
   }
 
   statusLabel(status: SubjectStatus): string {
     const map: Record<SubjectStatus, string> = {
-      'in-progress': 'IN PROGRESS',
-      done: 'DONE',
-      'to-do': 'TO-DO',
+      not_started: 'NOT STARTED',
+      in_progress: 'IN PROGRESS',
+      needs_review: 'NEEDS REVIEW',
+      confident: 'CONFIDENT',
+      mastered: 'MASTERED',
     };
     return map[status];
   }

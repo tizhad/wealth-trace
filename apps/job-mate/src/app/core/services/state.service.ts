@@ -3,39 +3,26 @@ import {
   Subject,
   Company,
   Application,
-  UserSettings,
   SubjectStatus,
   CompanyStatus,
-  Content,
   QA,
 } from '../models/jobmate.models';
 import { StorageService } from './storage.service';
-import { SUBJECTS } from '../../data/subjects.data';
-import { COMPANIES } from '../../data/companies.data';
-import { APPLICATIONS } from '../../data/applications.data';
 
 @Injectable({ providedIn: 'root' })
 export class StateService {
   private readonly storage = inject(StorageService);
 
   readonly subjects = signal<Subject[]>(
-    this.storage.load<Subject[]>('subjects') ?? SUBJECTS,
+    this.storage.load<Subject[]>('subjects') ?? [],
   );
 
   readonly companies = signal<Company[]>(
-    this.storage.load<Company[]>('companies') ?? COMPANIES,
+    this.storage.load<Company[]>('companies') ?? [],
   );
 
   readonly applications = signal<Application[]>(
-    this.storage.load<Application[]>('applications') ?? APPLICATIONS,
-  );
-
-  readonly settings = signal<UserSettings>(
-    this.storage.load<UserSettings>('settings') ?? {
-      displayName: 'Tina Rez',
-      email: 'tina@example.com',
-      accent: 'indigo',
-    },
+    this.storage.load<Application[]>('applications') ?? [],
   );
 
   readonly streak = signal<number>(this.storage.load<number>('streak') ?? 7);
@@ -43,29 +30,25 @@ export class StateService {
   /* ── Computed stats ──────────────────────────────────────────────────────── */
 
   readonly doneCount = computed(
-    () => this.subjects().filter((s) => s.status === 'done').length,
+    () => this.subjects().filter((s) => s.status === 'mastered').length,
   );
 
   readonly inProgressCount = computed(
-    () => this.subjects().filter((s) => s.status === 'in-progress').length,
+    () => this.subjects().filter((s) => s.status === 'in_progress').length,
   );
 
   readonly toDoCount = computed(
-    () => this.subjects().filter((s) => s.status === 'to-do').length,
+    () => this.subjects().filter((s) => s.status === 'not_started').length,
   );
 
   readonly totalSubjects = computed(() => this.subjects().length);
 
-  // readonly totalQA = computed(() =>
-  //   this.subjects().reduce((sum, s) => sum + s.qaCount, 0),
-  // );
-
   readonly progressPercent = computed(() =>
-    Math.round((this.doneCount() / this.totalSubjects()) * 100),
+    Math.round((this.doneCount() / (this.totalSubjects() || 1)) * 100),
   );
 
   readonly todaysFocus = computed(() =>
-    [...this.subjects()].filter((s) => s.status !== 'done').slice(0, 5),
+    [...this.subjects()].filter((s) => s.status !== 'mastered').slice(0, 5),
   );
 
   readonly recentApplications = computed(() =>
@@ -100,11 +83,16 @@ export class StateService {
     effect(() => this.storage.save('subjects', this.subjects()));
     effect(() => this.storage.save('companies', this.companies()));
     effect(() => this.storage.save('applications', this.applications()));
-    effect(() => this.storage.save('settings', this.settings()));
     effect(() => this.storage.save('streak', this.streak()));
   }
 
   /* ── Mutations ───────────────────────────────────────────────────────────── */
+
+  addSubject(subject: Omit<Subject, 'id' | 'createdAt' | 'updatedAt'>): void {
+    const id = `subject-${Date.now()}`;
+    const now = new Date();
+    this.subjects.update((list) => [{ id, ...subject, createdAt: now, updatedAt: now }, ...list]);
+  }
 
   setSubjectStatus(id: string, status: SubjectStatus): void {
     this.subjects.update((list) =>
@@ -114,34 +102,14 @@ export class StateService {
 
   updateSubject(id: string, patch: Partial<Subject>): void {
     this.subjects.update((list) =>
-      list.map((s) => (s.id === id ? { ...s, ...patch } : s)),
-    );
-  }
-
-  addNote(subjectId: string, note: Content): void {
-    this.subjects.update((list) =>
-      list.map((s) =>
-        s.id === subjectId
-          ? { ...s, content: [...(s.content ?? []), note] }
-          : s,
-      ),
-    );
-  }
-
-  removeNote(subjectId: string, index: number): void {
-    this.subjects.update((list) =>
-      list.map((s) =>
-        s.id === subjectId
-          ? { ...s, content: s.content?.filter((_, i) => i !== index) }
-          : s,
-      ),
+      list.map((s) => (s.id === id ? { ...s, ...patch, updatedAt: new Date() } : s)),
     );
   }
 
   addQA(subjectId: string, qa: QA): void {
     this.subjects.update((list) =>
       list.map((s) =>
-        s.id === subjectId ? { ...s, qa: [...(s.qa ?? []), qa] } : s,
+        s.id === subjectId ? { ...s, qa: [...s.qa, qa] } : s,
       ),
     );
   }
@@ -150,15 +118,16 @@ export class StateService {
     this.subjects.update((list) =>
       list.map((s) =>
         s.id === subjectId
-          ? { ...s, qa: s.qa?.filter((_, i) => i !== index) }
+          ? { ...s, qa: s.qa.filter((_, i) => i !== index) }
           : s,
       ),
     );
   }
 
-  addApplication(app: Omit<Application, 'id'>): void {
+  addApplication(app: Omit<Application, 'id' | 'createdAt' | 'updatedAt'>): void {
     const id = `app-${Date.now()}`;
-    this.applications.update((list) => [{ id, ...app }, ...list]);
+    const now = new Date();
+    this.applications.update((list) => [{ id, ...app, createdAt: now, updatedAt: now }, ...list]);
   }
 
   setCompanyStatus(id: string, status: CompanyStatus): void {
@@ -167,11 +136,4 @@ export class StateService {
     );
   }
 
-  updateDisplayName(name: string): void {
-    this.settings.update((s) => ({ ...s, displayName: name }));
-  }
-
-  updateAccent(accent: UserSettings['accent']): void {
-    this.settings.update((s) => ({ ...s, accent }));
-  }
 }

@@ -30,45 +30,49 @@
               stroke="var(--accent)"
               stroke-width="8"
               [attr.stroke-dasharray]="
-                state.progressPercent() * 1.634 + ' 163.4'
+                progressPercent() * 1.634 + ' 163.4'
               "
               stroke-linecap="round"
               transform="rotate(-90 32 32)"
             />
           </svg>
           <div class="donut-label">
-            {{ state.progressPercent() }}%<span>COMPLETE</span>
+            {{ progressPercent() }}%<span>COMPLETE</span>
           </div>
         </div>
         <div class="progress-legend">
           <div class="legend-row">
-            <span class="dot done"></span>Done
-            <strong>{{ state.doneCount() }}</strong>
+            <span class="dot done"></span>Mastered
+            <strong>{{ masteredCount() }}</strong>
           </div>
           <div class="legend-row">
             <span class="dot progress"></span>In progress
-            <strong>{{ state.inProgressCount() }}</strong>
+            <strong>{{ inProgressCount() }}</strong>
           </div>
           <div class="legend-row">
-            <span class="dot todo"></span>To&#8209;do
-            <strong>{{ state.toDoCount() }}</strong>
+            <span class="dot todo"></span>Not started
+            <strong>{{ notStartedCount() }}</strong>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Streak -->
+    <!-- Stats summary -->
     <div class="card streak-card">
       <div class="streak-top">
-        <span class="streak-icon">🔥</span>
-        <span class="streak-days">{{ state.streak() }} day streak</span>
+        <span class="streak-icon">📚</span>
+        <span class="streak-days">{{ studyStore.stats().total }} subjects total</span>
       </div>
-      <div class="streak-dots">
-        @for (d of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14]; track d) {
-          <div class="streak-dot" [class.filled]="d <= state.streak()"></div>
-        }
+      <div class="progress-legend" style="margin-top: 1rem">
+        <div class="legend-row">
+          <span class="dot done"></span>Needs review
+          <strong>{{ studyStore.stats().needsReview }}</strong>
+        </div>
+        <div class="legend-row">
+          <span class="dot todo"></span>Due for review
+          <strong>{{ studyStore.stats().dueForReview }}</strong>
+        </div>
       </div>
-      <p class="streak-msg">Studied 4h 20m this week. Keep going!</p>
     </div>
 
     <!-- Pipeline -->
@@ -101,14 +105,14 @@
         <span class="section-title">Today's focus</span>
         <a routerLink="/subjects" class="view-all">All subjects →</a>
       </div>
-      @for (subject of state.todaysFocus(); track subject.id) {
+      @for (subject of todaysFocus(); track subject.id) {
         <a [routerLink]="['/subjects', subject.id]" class="focus-row">
           <div class="focus-info">
-            <span class="focus-name">{{ subject.name }}</span>
-            <span class="focus-meta"
-              >{{ subject.qa?.length ?? 0 }} questions ·
-              {{ subject.companies?.join(', ') }}</span
-            >
+            <span class="focus-name">{{ subject.title }}</span>
+            <span class="focus-meta">
+              {{ subject.qa.length }} questions ·
+              {{ subject.companyTags.map(ct => ct.name).join(', ') }}
+            </span>
           </div>
           <span class="badge" [class]="priorityClass(subject.priority)">
             {{ subject.priority.toUpperCase() }}
@@ -123,7 +127,7 @@
         <span class="section-title">Recent applications</span>
         <a routerLink="/applications" class="view-all">View all →</a>
       </div>
-      @for (app of state.recentApplications(); track app.id) {
+      @for (app of recentApplications(); track app.id) {
         <div class="app-row">
           <div class="app-avatar">{{ companyInitial(app.company) }}</div>
           <div class="app-info">
