@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { AuthService } from '../../core/services/auth.service';
 
 @Component({
   selector: 'app-landing',
@@ -9,6 +10,9 @@ import { RouterLink } from '@angular/router';
   imports: [RouterLink],
 })
 export class LandingComponent {
+  private readonly auth = inject(AuthService);
+
+  readonly ctaRoute = computed(() => this.auth.isAuthenticated() ? '/dashboard' : '/auth');
   readonly trustedBy = [
     'Stripe',
     'Linear',

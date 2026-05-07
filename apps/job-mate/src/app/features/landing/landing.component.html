@@ -10,7 +10,7 @@
       <a href="#features">Features</a>
       <a href="#how-it-works">How it works</a>
     </div>
-    <a routerLink="/dashboard" class="ln-nav-cta">Get started →</a>
+    <a [routerLink]="ctaRoute()" class="ln-nav-cta">Get started →</a>
   </nav>
 
   <!-- ── Hero ─────────────────────────────────────────────────────────────── -->
@@ -27,7 +27,7 @@
         company and application — and know your streak has been building.
       </p>
       <div class="ln-hero-actions">
-        <a routerLink="/dashboard" class="ln-btn-primary">Start for free →</a>
+        <a [routerLink]="ctaRoute()" class="ln-btn-primary">Start for free →</a>
         <a href="#how-it-works" class="ln-btn-ghost">See how it works</a>
       </div>
       <div class="ln-trusted">
@@ -139,7 +139,7 @@
         <p class="ln-final-sub">
           Sign in to build your personalised interview study plan.
         </p>
-        <a routerLink="/dashboard" class="ln-btn-primary">Get started →</a>
+        <a [routerLink]="ctaRoute()" class="ln-btn-primary">Get started →</a>
       </div>
     </div>
   </section>
