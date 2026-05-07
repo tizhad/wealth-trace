@@ -1,0 +1,249 @@
+/* ViewEncapsulation.None — all selectors manually scoped under .re-wrap */
+
+.re-wrap {
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: border-color var(--transition);
+
+  &:focus-within {
+    border-color: var(--accent);
+  }
+}
+
+/* ── Toolbar ─────────────────────────────────────────────────────────────── */
+
+.re-wrap .re-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 5px 8px;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--surface);
+  flex-wrap: wrap;
+}
+
+.re-wrap .re-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 26px;
+  border-radius: 4px;
+  border: none;
+  background: transparent;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background var(--transition), color var(--transition);
+  flex-shrink: 0;
+
+  &:hover {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
+
+  &.re-btn--active {
+    background: var(--accent-light);
+    color: var(--accent);
+  }
+}
+
+.re-wrap .re-btn-text {
+  width: auto;
+  padding: 0 6px;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: inherit;
+  letter-spacing: 0.01em;
+}
+
+.re-wrap .re-sep {
+  width: 0.5px;
+  height: 18px;
+  background: var(--border);
+  margin: 0 4px;
+  flex-shrink: 0;
+}
+
+/* ── Link input row ──────────────────────────────────────────────────────── */
+
+.re-wrap .re-link-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  border-bottom: 0.5px solid var(--border);
+  background: var(--surface);
+}
+
+.re-wrap .re-link-input {
+  flex: 1;
+  height: 28px;
+  padding: 0 8px;
+  border: 0.5px solid var(--border);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--text);
+  font-size: 12.5px;
+  font-family: inherit;
+  outline: none;
+
+  &:focus { border-color: var(--accent); }
+  &::placeholder { color: var(--text-muted); }
+}
+
+.re-wrap .re-link-apply {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 4px;
+  border: none;
+  background: var(--accent);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--transition);
+
+  &:hover { background: var(--accent-hover); }
+}
+
+.re-wrap .re-link-remove {
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 4px;
+  border: 0.5px solid var(--pipe-rejected);
+  background: transparent;
+  color: var(--pipe-rejected);
+  font-size: 12px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--transition);
+
+  &:hover { background: #FFEEEE; }
+}
+
+.re-wrap .re-link-cancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 0.5px solid var(--border);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: background var(--transition);
+
+  &:hover { background: var(--surface-hover); color: var(--text); }
+}
+
+/* ── ProseMirror editor area ─────────────────────────────────────────────── */
+
+.re-wrap .re-host {
+  flex: 1;
+}
+
+.re-wrap .re-content {
+  min-height: 140px;
+  padding: 0.875rem 1rem;
+  outline: none;
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* Placeholder */
+.re-wrap .re-content.is-editor-empty::before {
+  content: attr(data-placeholder);
+  color: var(--text-muted);
+  pointer-events: none;
+  float: left;
+  height: 0;
+}
+
+/* Content styles */
+.re-wrap .re-content p {
+  margin: 0 0 0.25rem;
+}
+
+.re-wrap .re-content h2 {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin: 0.625rem 0 0.25rem;
+  letter-spacing: -0.01em;
+}
+
+.re-wrap .re-content strong {
+  font-weight: 700;
+}
+
+.re-wrap .re-content em {
+  font-style: italic;
+}
+
+.re-wrap .re-content code {
+  font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+  font-size: 12px;
+  background: var(--surface-hover);
+  border: 0.5px solid var(--border);
+  border-radius: 3px;
+  padding: 1px 5px;
+  color: var(--accent);
+}
+
+.re-wrap .re-content pre {
+  background: var(--surface-hover);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  margin: 0.5rem 0;
+  overflow-x: auto;
+}
+
+.re-wrap .re-content pre code {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  color: var(--text);
+  border-radius: 0;
+  display: block;
+  white-space: pre;
+}
+
+.re-wrap .re-content ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  margin: 0.25rem 0;
+}
+
+.re-wrap .re-content ol {
+  list-style: decimal;
+  padding-left: 1.25rem;
+  margin: 0.25rem 0;
+}
+
+.re-wrap .re-content li {
+  margin: 2px 0;
+}
+
+.re-wrap .re-content a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover { opacity: 0.75; }
+}
+
+/* ProseMirror cursor */
+.re-wrap .ProseMirror-focused {
+  outline: none;
+}

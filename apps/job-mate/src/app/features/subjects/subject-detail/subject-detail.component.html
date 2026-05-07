@@ -18,7 +18,7 @@
     <!-- Header -->
     <div class="subject-header">
       <div class="header-left">
-        <h1 class="subject-title">{{ sub.name }}</h1>
+        <h1 class="subject-title">{{ sub.title }}</h1>
         <div class="header-badges">
           <span class="badge" [class]="statusClass(sub.status)">{{
             statusLabel(sub.status)
@@ -26,16 +26,12 @@
           <span class="badge" [class]="priorityClass(sub.priority)">{{
             sub.priority.toUpperCase()
           }}</span>
-          @for (company of sub.companies; track company) {
-            <span class="company-chip">{{ company }}</span>
+          @for (ct of sub.companyTags; track ct.id) {
+            <span class="company-chip">{{ ct.name }}</span>
           }
         </div>
       </div>
       <div class="header-right">
-        <div class="potential-ring">
-          <span class="potential-num">{{ sub.potential }}</span>
-          <span class="potential-label">potential</span>
-        </div>
         <button class="btn-edit" (click)="openEdit()">Edit</button>
       </div>
     </div>
@@ -52,18 +48,39 @@
 
         <div class="edit-fields">
           <div class="field-group">
+            <span class="field-label">Title</span>
+            <input
+              class="field-input"
+              type="text"
+              [value]="editTitle()"
+              (input)="editTitle.set($any($event.target).value)"
+            />
+          </div>
+
+          <div class="field-group">
+            <span class="field-label">Summary</span>
+            <textarea
+              class="field-textarea"
+              rows="3"
+              placeholder="Brief description of this topic…"
+              [value]="editSummary()"
+              (input)="editSummary.set($any($event.target).value)"
+            ></textarea>
+          </div>
+
+          <div class="field-group">
             <span class="field-label">Status</span>
             <div class="radio-group">
-              @for (opt of ['to-do', 'in-progress', 'done']; track opt) {
+              @for (opt of statusOptions; track opt.value) {
                 <label class="radio-label">
                   <input
                     type="radio"
                     name="edit-status"
-                    [value]="opt"
-                    [checked]="editStatus() === opt"
-                    (change)="editStatus.set($any(opt))"
+                    [value]="opt.value"
+                    [checked]="editStatus() === opt.value"
+                    (change)="editStatus.set($any(opt.value))"
                   />
-                  {{ statusLabel(opt) }}
+                  {{ opt.label }}
                 </label>
               }
             </div>
@@ -72,31 +89,19 @@
           <div class="field-group">
             <span class="field-label">Priority</span>
             <div class="radio-group">
-              @for (opt of ['critical', 'medium', 'low']; track opt) {
+              @for (opt of priorityOptions; track opt.value) {
                 <label class="radio-label">
                   <input
                     type="radio"
                     name="edit-priority"
-                    [value]="opt"
-                    [checked]="editPriority() === opt"
-                    (change)="editPriority.set($any(opt))"
+                    [value]="opt.value"
+                    [checked]="editPriority() === opt.value"
+                    (change)="editPriority.set($any(opt.value))"
                   />
-                  {{ opt }}
+                  {{ opt.label }}
                 </label>
               }
             </div>
-          </div>
-
-          <div class="field-group">
-            <span class="field-label">Potential (1–10)</span>
-            <input
-              class="field-input short"
-              type="number"
-              min="1"
-              max="10"
-              [value]="editPotential()"
-              (input)="editPotential.set(+$any($event.target).value)"
-            />
           </div>
 
           <div class="field-group">
@@ -137,93 +142,32 @@
           (click)="setTab(tab.key)"
         >
           {{ tab.label }}
-          <span class="tab-count">{{
-            tab.key === 'notes'
-              ? (sub.content?.length ?? 0)
-              : (sub.qa?.length ?? 0)
-          }}</span>
+          @if (tab.key === 'qa') {
+            <span class="tab-count">{{ sub.qa.length }}</span>
+          }
         </button>
       }
     </div>
 
     <!-- Notes tab -->
     @if (activeTab() === 'notes') {
-      <div class="tab-content" style="background: green">
-        @if (sub.content?.length) {
-          <div class="notes-list" style="background: red">
-            @for (note of sub.content; track $index; let i = $index) {
-              <div class="note-card">
-                <div class="note-card-top">
-                  @if (note.title) {
-                    <div class="note-title">{{ note.title }}</div>
-                  }
-                  <button
-                    class="btn-remove"
-                    (click)="removeNote(i)"
-                    title="Remove note"
-                  >
-                    ×
-                  </button>
-                </div>
-                @if (note.description) {
-                  <p class="note-desc">{{ note.description }}</p>
-                }
-                @if (note.code) {
-                  <pre class="code-block"><code>{{ note.code }}</code></pre>
-                }
-              </div>
-            }
-          </div>
-        } @else {
-          <div class="empty-state">
-            <p class="empty-text">No notes yet.</p>
-            <p class="empty-sub">Add your first note below.</p>
-          </div>
+      <div class="tab-content">
+        @if (sub.summary) {
+          <p class="subject-summary">{{ sub.summary }}</p>
         }
-
-        @if (showNoteForm()) {
-          <div class="form-card">
-            <input
-              class="field-input"
-              placeholder="Title (optional)"
-              [value]="noteTitle()"
-              (input)="noteTitle.set($any($event.target).value)"
-            />
-            <textarea
-              class="field-textarea"
-              placeholder="Description…"
-              rows="4"
-              [value]="noteDesc()"
-              (input)="noteDesc.set($any($event.target).value)"
-            ></textarea>
-            <textarea
-              class="field-textarea mono"
-              placeholder="Code snippet (optional)"
-              rows="3"
-              [value]="noteCode()"
-              (input)="noteCode.set($any($event.target).value)"
-            ></textarea>
-            <div class="form-actions">
-              <button class="btn-ghost" (click)="showNoteForm.set(false)">
-                Cancel
-              </button>
-              <button class="btn-primary" (click)="submitNote()">
-                Add note
-              </button>
-            </div>
-          </div>
-        } @else {
-          <button class="btn-add-item" (click)="showNoteForm.set(true)">
-            + Add note
+        <app-rich-editor [value]="noteHtml()" (valueChange)="noteHtml.set($event)" />
+        <div class="note-actions">
+          <button class="btn-primary" [disabled]="noteSaving()" (click)="saveNote()">
+            {{ noteSaving() ? 'Saving…' : 'Save note' }}
           </button>
-        }
+        </div>
       </div>
     }
 
     <!-- Q&A tab -->
     @if (activeTab() === 'qa') {
       <div class="tab-content">
-        @if (sub.qa?.length) {
+        @if (sub.qa.length) {
           <div class="qa-list">
             @for (item of sub.qa; track $index; let i = $index) {
               <div class="qa-card" [class.open]="openQAIndex() === i">

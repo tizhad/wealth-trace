@@ -15,7 +15,9 @@
   margin-bottom: 1.25rem;
   transition: color var(--transition);
 
-  &:hover { color: var(--accent); }
+  &:hover {
+    color: var(--accent);
+  }
 }
 
 /* ── Subject header ──────────────────────────────────────────────────────── */
@@ -28,7 +30,9 @@
   margin-bottom: 1.5rem;
 }
 
-.header-left { flex: 1; }
+.header-left {
+  flex: 1;
+}
 
 .subject-title {
   font-size: 1.6rem;
@@ -62,31 +66,6 @@
   flex-shrink: 0;
 }
 
-.potential-ring {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  width: 56px;
-  height: 56px;
-  border-radius: 50%;
-  border: 2px solid var(--accent);
-}
-
-.potential-num {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--accent);
-  line-height: 1;
-}
-
-.potential-label {
-  font-size: 8px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-muted);
-}
-
 .btn-edit {
   font-size: 12px;
   font-weight: 500;
@@ -95,7 +74,9 @@
   border-radius: var(--radius-sm);
   padding: 4px 12px;
   background: var(--surface);
-  transition: color var(--transition), border-color var(--transition);
+  transition:
+    color var(--transition),
+    border-color var(--transition);
 
   &:hover {
     color: var(--accent);
@@ -158,9 +139,13 @@
   outline: none;
   transition: border-color var(--transition);
 
-  &:focus { border-color: var(--accent); }
+  &:focus {
+    border-color: var(--accent);
+  }
 
-  &.short { width: 80px; }
+  &.short {
+    width: 80px;
+  }
 }
 
 .field-textarea {
@@ -176,9 +161,14 @@
   font-family: inherit;
   transition: border-color var(--transition);
 
-  &:focus { border-color: var(--accent); }
+  &:focus {
+    border-color: var(--accent);
+  }
 
-  &.mono { font-family: 'JetBrains Mono', 'Fira Code', monospace; font-size: 12px; }
+  &.mono {
+    font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    font-size: 12px;
+  }
 }
 
 .radio-group {
@@ -195,7 +185,9 @@
   color: var(--text-secondary);
   cursor: pointer;
 
-  input[type='radio'] { accent-color: var(--accent); }
+  input[type='radio'] {
+    accent-color: var(--accent);
+  }
 }
 
 .chip-row {
@@ -222,14 +214,18 @@
   line-height: 1;
   padding: 0;
 
-  &:hover { color: var(--text); }
+  &:hover {
+    color: var(--text);
+  }
 }
 
 .company-input-row {
   display: flex;
   gap: 8px;
 
-  .field-input { flex: 1; }
+  .field-input {
+    flex: 1;
+  }
 }
 
 .btn-add {
@@ -242,7 +238,9 @@
   background: transparent;
   transition: background var(--transition);
 
-  &:hover { background: color-mix(in srgb, var(--accent) 10%, transparent); }
+  &:hover {
+    background: color-mix(in srgb, var(--accent) 10%, transparent);
+  }
 }
 
 /* ── Tab bar ─────────────────────────────────────────────────────────────── */
@@ -264,9 +262,13 @@
   color: var(--text-secondary);
   border-bottom: 2px solid transparent;
   white-space: nowrap;
-  transition: color var(--transition), border-color var(--transition);
+  transition:
+    color var(--transition),
+    border-color var(--transition);
 
-  &:hover { color: var(--text); }
+  &:hover {
+    color: var(--text);
+  }
 
   &.active {
     color: var(--accent);
@@ -286,58 +288,104 @@
 
 /* ── Tab content ─────────────────────────────────────────────────────────── */
 
-.tab-content { display: flex; flex-direction: column; gap: 0.75rem; }
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
 
-/* ── Notes ───────────────────────────────────────────────────────────────── */
+/* ── Notes (rich HTML rendered from Tiptap) ──────────────────────────────── */
 
-.notes-list { display: flex; flex-direction: column; gap: 0.75rem; }
+::ng-deep .notes-body {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--text);
 
-.note-card {
+  p { margin: 0 0 0.35rem; }
+  h2 { font-size: 1rem; font-weight: 700; color: var(--text); margin: 0.75rem 0 0.25rem; letter-spacing: -0.01em; }
+  strong { font-weight: 700; }
+  em { font-style: italic; }
+  ul { list-style: disc; padding-left: 1.25rem; margin: 0.25rem 0; }
+  ol { list-style: decimal; padding-left: 1.25rem; margin: 0.25rem 0; }
+  li { margin: 2px 0; }
+
+  a {
+    color: var(--accent);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    &:hover { opacity: 0.75; }
+  }
+
+  code {
+    font-family: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
+    font-size: 12px;
+    background: var(--surface-hover);
+    border: 0.5px solid var(--border);
+    border-radius: 3px;
+    padding: 1px 5px;
+    color: var(--accent);
+  }
+
+  pre {
+    background: var(--surface-hover);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    margin: 0.5rem 0;
+    overflow-x: auto;
+
+    code {
+      background: none;
+      border: none;
+      padding: 0;
+      color: var(--text);
+      font-size: 12px;
+      border-radius: 0;
+      display: block;
+      white-space: pre;
+    }
+  }
+}
+
+/* ── Subject summary ─────────────────────────────────────────────────────── */
+
+.subject-summary {
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--text-secondary);
+  padding: 0.75rem 1rem;
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius-sm);
+}
+
+/* ── Note editor card ────────────────────────────────────────────────────── */
+
+.note-editor-card {
   border: 0.5px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--surface);
-  padding: 14px;
+  overflow: hidden;
+
+  &:focus-within {
+    border-color: var(--accent);
+  }
+}
+
+.note-actions {
+  padding: 8px 12px;
+  border-top: 0.5px solid var(--border);
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.note-card-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-}
-
-.note-title {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--text);
-}
-
-.note-desc {
-  font-size: 13px;
-  color: var(--text-secondary);
-  line-height: 1.65;
-}
-
-.code-block {
-  background: var(--bg-secondary);
-  border: 0.5px solid var(--border);
-  border-radius: var(--radius-sm);
-  padding: 10px 12px;
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
-  font-size: 12px;
-  color: var(--text-secondary);
-  overflow-x: auto;
-  white-space: pre;
-  line-height: 1.6;
-  margin: 0;
+  justify-content: flex-end;
 }
 
 /* ── Q&A ─────────────────────────────────────────────────────────────────── */
 
-.qa-list { display: flex; flex-direction: column; gap: 6px; }
+.qa-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
 
 .qa-card {
   border: 0.5px solid var(--border);
@@ -346,7 +394,9 @@
   overflow: hidden;
   transition: border-color var(--transition);
 
-  &.open { border-color: var(--accent); }
+  &.open {
+    border-color: var(--accent);
+  }
 }
 
 .qa-header {
@@ -359,7 +409,9 @@
   position: relative;
   cursor: pointer;
 
-  &:hover { background: var(--surface-hover); }
+  &:hover {
+    background: var(--surface-hover);
+  }
 }
 
 .qa-meta {
@@ -384,7 +436,9 @@
   transition: transform var(--transition);
 }
 
-.qa-card.open .chevron { transform: rotate(180deg); }
+.qa-card.open .chevron {
+  transform: rotate(180deg);
+}
 
 .qa-answer {
   padding: 0 16px 14px;
@@ -399,15 +453,26 @@
     color: var(--text-secondary);
     padding-top: 10px;
 
-    & + p { padding-top: 0; }
+    & + p {
+      padding-top: 0;
+    }
   }
 }
 
 /* ── Difficulty badges ───────────────────────────────────────────────────── */
 
-.diff-hard   { background: var(--priority-critical-bg); color: var(--priority-critical-text); }
-.diff-medium { background: var(--priority-medium-bg);   color: var(--priority-medium-text); }
-.diff-easy   { background: var(--status-done-bg);       color: var(--status-done-text); }
+.diff-hard {
+  background: var(--priority-critical-bg);
+  color: var(--priority-critical-text);
+}
+.diff-medium {
+  background: var(--priority-medium-bg);
+  color: var(--priority-medium-text);
+}
+.diff-easy {
+  background: var(--status-done-bg);
+  color: var(--status-done-text);
+}
 
 /* ── Remove buttons ──────────────────────────────────────────────────────── */
 
@@ -419,7 +484,9 @@
   padding: 0 4px;
   transition: color var(--transition);
 
-  &:hover { color: var(--text); }
+  &:hover {
+    color: var(--text);
+  }
 }
 
 .btn-remove-inline {
@@ -429,7 +496,9 @@
   padding: 0 4px;
   transition: color var(--transition);
 
-  &:hover { color: var(--text); }
+  &:hover {
+    color: var(--text);
+  }
 }
 
 /* ── Add item button ─────────────────────────────────────────────────────── */
@@ -442,7 +511,9 @@
   padding: 6px 0;
   transition: opacity var(--transition);
 
-  &:hover { opacity: 0.75; }
+  &:hover {
+    opacity: 0.75;
+  }
 }
 
 /* ── Form card ───────────────────────────────────────────────────────────── */
@@ -475,7 +546,9 @@
   background: transparent;
   transition: color var(--transition);
 
-  &:hover { color: var(--text); }
+  &:hover {
+    color: var(--text);
+  }
 }
 
 /* ── Empty state ─────────────────────────────────────────────────────────── */
