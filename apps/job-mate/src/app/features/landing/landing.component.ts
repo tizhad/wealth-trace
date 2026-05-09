@@ -12,71 +12,76 @@ import { AuthService } from '../../core/services/auth.service';
 export class LandingComponent {
   private readonly auth = inject(AuthService);
 
-  readonly ctaRoute = computed(() => this.auth.isAuthenticated() ? '/dashboard' : '/auth');
-  readonly trustedBy = [
-    'Stripe',
-    'Linear',
-    'Notion',
-    'Figma',
-    'Vercel',
-    'Airbnb',
-    'Datadog',
-  ];
+  readonly ctaRoute = computed(() => (this.auth.isAuthenticated() ? '/dashboard' : '/auth'));
+
+  readonly trustedBy = ['Stripe', 'Linear', 'Notion', 'Figma', 'Vercel', 'Airbnb', 'Datadog'];
+
+  readonly stars = [0, 1, 2, 3, 4];
+  readonly year = new Date().getFullYear();
 
   readonly features = [
     {
-      tag: 'SUBJECTS',
-      tagClass: 'tag-purple',
-      title: 'Track subjects forever',
-      desc: 'Build your knowledge tree. Study DSA, system design, and behaviorals with questions attached.',
+      iconName: 'book-open',
+      gradient: 'var(--gradient-cool)',
+      title: 'Nest subjects forever',
+      body: 'Break topics into sub-subjects (and sub-sub-subjects). Tag priority, status, and interview potential.',
+      badge: 'Smart tree',
     },
     {
-      tag: 'COMPANIES',
-      tagClass: 'tag-teal',
-      title: 'Companies & questions',
-      desc: 'Map subjects to companies. Know exactly what to study for each target role.',
+      iconName: 'building2',
+      gradient: 'var(--gradient-warm)',
+      title: 'Companies ↔ questions',
+      body: 'See exactly which companies asked which question — and build a focused study plan from real signals.',
+      badge: 'Linked',
     },
     {
-      tag: 'APPLICATIONS',
-      tagClass: 'tag-orange',
+      iconName: 'briefcase',
+      gradient: 'var(--gradient-primary)',
       title: 'Application pipeline',
-      desc: 'Drag to update status. Track every conversation, end-to-end.',
+      body: 'Drag-and-drop kanban with status history, salary, notes, and a resume version saved per role.',
+      badge: 'Kanban',
     },
     {
-      tag: 'PRIORITIES',
-      tagClass: 'tag-blue',
+      iconName: 'target',
+      gradient: 'var(--gradient-warm)',
       title: 'Priority that adapts',
-      desc: 'Ranked by interview potential. Always know what to study next.',
+      body: 'Pulse re-ranks your focus list based on upcoming interviews and the gaps in your prep.',
+      badge: 'Adaptive',
     },
     {
-      tag: 'RESOURCES',
-      tagClass: 'tag-violet',
-      title: 'Resources by company',
-      desc: 'Curated notes, code snippets and Q&A attached to every subject.',
+      iconName: 'zap',
+      gradient: 'var(--gradient-primary)',
+      title: 'Resume per company',
+      body: "Upload a tailored PDF for every application. Diff versions and never lose your best line again.",
+      badge: 'PDF vault',
     },
     {
-      tag: 'DASHBOARD',
-      tagClass: 'tag-orange',
+      iconName: 'trending-up',
+      gradient: 'var(--gradient-cool)',
       title: 'Daily heartbeat',
-      desc: 'One screen to rule them all. Streak, progress, focus list, pipeline — at a glance.',
+      body: "Streaks, heatmaps, and gentle nudges. See progress so clearly you can't help but keep going.",
+      badge: 'Habits',
     },
   ] as const;
 
   readonly steps = [
     {
       num: '01',
+      tone: 'var(--coral)',
       title: 'Capture',
-      desc: 'Add every subject, company and application as you discover them. No structure needed to start.',
+      body: 'Drop in any subject, sub-subject or interview question in seconds. Tag the company that asked it.',
     },
     {
       num: '02',
-      title: 'Prioritise',
-      desc: 'JobMate ranks your study list by potential impact. No more guessing what to open next.',
+      tone: 'var(--amber)',
+      title: 'Prioritize',
+      body: 'Pulse scores interview potential. Sort, search and surface what actually matters this week.',
     },
     {
       num: '03',
+      tone: 'var(--mint)',
       title: 'Land',
-      desc: 'Walk into every interview prepared. Track every offer, every stage, all the way to close.',
+      body: 'Track applications, attach the right resume, and walk into interviews with quiet confidence.',
     },
   ] as const;
 }
