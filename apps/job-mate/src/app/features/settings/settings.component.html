@@ -45,6 +45,31 @@
       </div>
     </div>
 
+    <!-- Code theme -->
+    <div class="card settings-card">
+      <h2 class="card-title">Code theme</h2>
+      <p class="card-sub">Applied to syntax-highlighted code blocks in notes.</p>
+      <div class="theme-row">
+        @for (t of codeThemes; track t.id) {
+          <button
+            class="theme-swatch"
+            [class.selected]="codeTheme.activeId() === t.id"
+            (click)="codeTheme.setTheme(t.id)"
+            [attr.aria-label]="t.label"
+          >
+            <span class="swatch-preview" [style.background]="t.bg">
+              @for (c of t.colors; track c) {
+                <span class="swatch-dot" [style.background]="c"></span>
+              }
+            </span>
+            <span class="swatch-name">{{ t.label }}</span>
+          </button>
+        }
+      </div>
+
+      <pre class="theme-preview" [style.background]="codeTheme.activeTheme().bg" [style.border-color]="codeTheme.activeTheme().isDark ? 'rgba(255,255,255,0.08)' : 'var(--border)'"><code class="hljs language-typescript" [innerHTML]="highlightedSample"></code></pre>
+    </div>
+
     <!-- Account -->
     <div class="card settings-card">
       <h2 class="card-title">Account</h2>

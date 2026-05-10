@@ -167,7 +167,9 @@
         } @else {
           <div class="note-view">
             @if (noteHtml()) {
-              <div class="note-content" [innerHTML]="noteHtml()"></div>
+              <div class="note-read-wrap">
+                <div class="note-content" [innerHTML]="processedNoteHtml()"></div>
+              </div>
             } @else {
               <div class="note-empty">
                 <p>No notes yet.</p>

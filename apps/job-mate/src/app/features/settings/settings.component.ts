@@ -1,7 +1,9 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import hljs from 'highlight.js';
 import { Router } from '@angular/router';
 import { SettingsStore } from '../../core/stores/settings.store';
 import { AuthService } from '../../core/services/auth.service';
+import { CodeThemeService, CODE_THEMES } from '../../core/services/code-theme.service';
 import type { UserSettings } from '../../core/models/jobmate.models';
 
 @Component({
@@ -13,7 +15,20 @@ import type { UserSettings } from '../../core/models/jobmate.models';
 export class SettingsComponent {
   readonly settingsStore = inject(SettingsStore);
   readonly auth = inject(AuthService);
+  readonly codeTheme = inject(CodeThemeService);
   private readonly router = inject(Router);
+
+  readonly codeThemes = CODE_THEMES;
+
+  readonly highlightedSample = hljs.highlight(
+`// Score: 1 (new) → 5 (mastered)
+function schedule(score: number): Date {
+  const days = [1, 3, 7, 14, 30];
+  const label = score === 5 ? "mastered" : "reviewing";
+  const next = new Date();
+  next.setDate(next.getDate() + days[score - 1]);
+  return next;
+}`, { language: 'typescript' }).value;
 
   readonly displayName = signal(this.settingsStore.settings()?.displayName ?? '');
 

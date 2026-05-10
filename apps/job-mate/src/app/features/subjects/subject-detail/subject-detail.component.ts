@@ -8,9 +8,11 @@ import {
   signal,
 } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
+import hljs from 'highlight.js';
 import { StudyStore } from '../../../core/stores/study.store';
 import type { SubjectPriority, SubjectStatus } from '../../../core/models/jobmate.models';
 import { RichEditorComponent } from '../../../shared/components/rich-editor/rich-editor.component';
+import { CodeThemeService } from '../../../core/services/code-theme.service';
 
 type SubjectTab = 'notes' | 'qa';
 
@@ -25,6 +27,7 @@ export class SubjectDetailComponent {
   readonly id = input.required<string>();
   readonly store = inject(StudyStore);
   private readonly router = inject(Router);
+  readonly codeTheme = inject(CodeThemeService);
 
   readonly subject = computed(() => this.store.getById(this.id()));
 
@@ -53,6 +56,25 @@ export class SubjectDetailComponent {
   readonly noteHtml = signal('');
   readonly noteSaving = signal(false);
   readonly noteEditMode = signal(false);
+
+  readonly processedNoteHtml = computed(() => {
+    const html = this.noteHtml();
+    if (!html) return '';
+    const doc = new DOMParser().parseFromString(html, 'text/html');
+    doc.querySelectorAll<HTMLElement>('pre code').forEach(block => {
+      const lang = Array.from(block.classList)
+        .find(c => c.startsWith('language-'))
+        ?.replace('language-', '');
+      try {
+        const result = lang
+          ? hljs.highlight(block.textContent ?? '', { language: lang }).value
+          : hljs.highlightAuto(block.textContent ?? '').value;
+        block.innerHTML = result;
+        block.classList.add('hljs');
+      } catch { /* unsupported language — leave as plain text */ }
+    });
+    return doc.body.innerHTML;
+  });
 
   constructor() {
     afterNextRender(() => {
