@@ -51,6 +51,8 @@
   --priority-high-text:     #C0621A;
   --priority-medium-bg:     #FFFBE8;
   --priority-medium-text:   #A07C10;
+  --priority-low-bg:        #F0F4FF;
+  --priority-low-text:      #4A5FA8;
 
   /* pipeline statuses */
   --pipe-saved:       #9898B3;
@@ -174,6 +176,7 @@ input, textarea {
   &.priority-critical { background: var(--priority-critical-bg); color: var(--priority-critical-text); }
   &.priority-high     { background: var(--priority-high-bg);     color: var(--priority-high-text); }
   &.priority-medium   { background: var(--priority-medium-bg);   color: var(--priority-medium-text); }
+  &.priority-low      { background: var(--priority-low-bg);      color: var(--priority-low-text); }
 
   &.category-badge    { background: var(--surface-hover); color: var(--text-muted); }
 
