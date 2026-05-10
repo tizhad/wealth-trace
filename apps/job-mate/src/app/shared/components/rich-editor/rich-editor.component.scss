@@ -150,10 +150,10 @@
 }
 
 .re-wrap .re-content {
-  min-height: 140px;
+  min-height: clamp(200px, calc(100vh - 400px), 900px);
   padding: 0.875rem 1rem;
   outline: none;
-  font-size: 13.5px;
+  font-size: 19.5px;
   line-height: 1.65;
   color: var(--text);
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;

@@ -1,6 +1,7 @@
 .page {
   padding: 2rem;
   max-width: 860px;
+  margin: 0 auto;
 }
 
 /* ── Back link ───────────────────────────────────────────────────────────── */
@@ -386,11 +387,11 @@
   border-radius: var(--radius-sm);
   background: var(--bg);
   padding: 0.875rem 1rem;
-  min-height: 140px;
+  min-height: clamp(200px, calc(100vh - 340px), 900px);
 }
 
 ::ng-deep .note-content {
-  font-size: 13.5px;
+  font-size: 19.5px;
   line-height: 1.65;
   color: var(--text);
   min-height: 80px;
