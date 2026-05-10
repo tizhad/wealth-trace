@@ -28,50 +28,36 @@
 .toolbar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: 8px;
   margin-bottom: 1rem;
 }
 
-.sort-group {
-  display: flex;
+.toolbar-btn {
+  display: inline-flex;
   align-items: center;
-  gap: 4px;
-}
-
-.toolbar-label {
-  font-size: 12.5px;
-  color: var(--text-muted);
-  margin-right: 4px;
-}
-
-.sort-btn {
-  padding: 5px 12px;
+  gap: 6px;
+  padding: 6px 14px;
   border-radius: 999px;
   font-size: 12.5px;
   font-weight: 500;
   color: var(--text-secondary);
   border: 0.5px solid var(--border);
   background: var(--surface);
+  cursor: pointer;
   transition: all var(--transition);
 
   &:hover {
     border-color: var(--accent);
     color: var(--accent);
   }
-  &.active {
-    background: var(--accent-light);
-    color: var(--accent);
-    border-color: transparent;
-    font-weight: 600;
-  }
 }
 
 .subject-count {
+  margin-left: auto;
   font-size: 12.5px;
   color: var(--text-muted);
-  strong {
-    color: var(--text);
-  }
+
+  strong { color: var(--text); }
 }
 
 /* ── Table ───────────────────────────────────────────────────────────────── */
@@ -83,7 +69,7 @@
 
 .table-header {
   display: grid;
-  grid-template-columns: 1fr 120px 130px 100px;
+  grid-template-columns: 1fr 120px 120px 100px 36px;
   padding: 10px 1.25rem;
   border-bottom: 0.5px solid var(--border);
   font-size: 11px;
@@ -95,7 +81,7 @@
 
 .table-row {
   display: grid;
-  grid-template-columns: 1fr 120px 130px 100px;
+  grid-template-columns: 1fr 120px 120px 100px 36px;
   align-items: center;
   padding: 12px 1.25rem;
   border-bottom: 0.5px solid var(--border);
@@ -108,6 +94,8 @@
   }
   &:hover {
     background: var(--surface-hover);
+
+    .row-menu { opacity: 1; }
   }
 }
 
@@ -134,10 +122,51 @@
 .company-tag {
   background: var(--surface-hover);
   border: 0.5px solid var(--border);
-  border-radius: 4px;
-  padding: 1px 6px;
-  font-size: 11px;
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-size: 10.5px;
+  font-weight: 500;
   color: var(--text-secondary);
+}
+
+.potential-cell {
+  display: flex;
+  align-items: center;
+}
+
+.potential-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: var(--surface-hover);
+  border: 0.5px solid var(--border);
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--text);
+  tabular-nums: true;
+}
+
+.row-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity var(--transition), background var(--transition);
+
+  &:hover {
+    background: var(--surface-hover);
+    color: var(--text);
+  }
 }
 
 /* ── Inline status dropdown ──────────────────────────────────────────────── */

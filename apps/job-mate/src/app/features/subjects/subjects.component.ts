@@ -19,7 +19,7 @@ import {
   SubjectStatus,
 } from '../../core/models/jobmate.models';
 
-type SortKey = 'title' | 'qa' | 'status' | 'priority';
+type SortKey = 'title' | 'qa' | 'status' | 'priority' | 'potential';
 
 @Component({
   selector: 'app-subjects',
@@ -32,8 +32,21 @@ export class SubjectsComponent {
   readonly store = inject(StudyStore);
   private readonly router = inject(Router);
 
-  readonly sortKey = signal<SortKey>('priority');
+  readonly sortKey = signal<SortKey>('potential');
   readonly showForm = signal(false);
+
+  readonly totalQA = computed(() =>
+    this.store.filtered().reduce((n, s) => n + s.qa.length, 0)
+  );
+
+  private readonly sortLabels: Record<SortKey, string> = {
+    potential: 'Potential',
+    priority: 'Priority',
+    title: 'Title',
+    qa: 'Q&A Count',
+    status: 'Status',
+  };
+  readonly sortLabel = computed(() => this.sortLabels[this.sortKey()]);
 
   private readonly PRIORITY_ORDER: Record<SubjectPriority, number> = {
     critical: 0, high: 1, medium: 2, low: 3,
@@ -49,7 +62,8 @@ export class SubjectsComponent {
         case 'title':    return a.title.localeCompare(b.title);
         case 'qa':       return b.qa.length - a.qa.length;
         case 'status':   return this.STATUS_ORDER[a.status] - this.STATUS_ORDER[b.status];
-        case 'priority': return this.PRIORITY_ORDER[a.priority] - this.PRIORITY_ORDER[b.priority];
+        case 'priority':  return this.PRIORITY_ORDER[a.priority] - this.PRIORITY_ORDER[b.priority];
+        case 'potential': return b.confidenceScore - a.confidenceScore;
       }
     });
   });
@@ -104,6 +118,12 @@ export class SubjectsComponent {
 
   setSort(key: SortKey): void {
     this.sortKey.set(key);
+  }
+
+  cycleSort(): void {
+    const keys: SortKey[] = ['potential', 'priority', 'title', 'qa', 'status'];
+    const idx = keys.indexOf(this.sortKey());
+    this.sortKey.set(keys[(idx + 1) % keys.length]);
   }
 
   toggleStatusMenu(id: string, event: Event): void {

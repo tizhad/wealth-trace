@@ -24,37 +24,31 @@
 
   <!-- Toolbar -->
   <div class="toolbar">
-    <div class="sort-group">
-      <span class="toolbar-label">Sort:</span>
-      @for (
-        opt of [
-          { key: 'priority', label: 'Priority' },
-          { key: 'title', label: 'Title' },
-          { key: 'qa', label: 'Q&A count' },
-        ];
-        track opt.key
-      ) {
-        <button
-          class="sort-btn"
-          [class.active]="sortKey() === opt.key"
-          (click)="setSort($any(opt.key))"
-        >
-          {{ opt.label }}
-        </button>
-      }
-    </div>
+    <button class="toolbar-btn" (click)="cycleSort()">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M7 16V4m0 0L3 8m4-4l4 4"/><path d="M17 8v12m0 0l4-4m-4 4l-4-4"/>
+      </svg>
+      Sort: {{ sortLabel() }}
+    </button>
+    <button class="toolbar-btn">
+      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+      </svg>
+      Filter
+    </button>
     <div class="subject-count">
-      <strong>{{ sorted().length }}</strong> subjects
+      <strong>{{ sorted().length }}</strong> subjects · <strong>{{ totalQA() }}</strong> questions
     </div>
   </div>
 
   <!-- Table -->
   <div class="card subjects-table">
     <div class="table-header">
-      <span>SUBJECT</span>
-      <span>CATEGORY</span>
-      <span>STATUS</span>
-      <span>PRIORITY</span>
+      <span>Subject</span>
+      <span>Status</span>
+      <span>Priority</span>
+      <span>Potential</span>
+      <span></span>
     </div>
 
     @for (subject of sorted(); track subject.id) {
@@ -67,9 +61,6 @@
               <span class="company-tag">{{ ct.name }}</span>
             }
           </div>
-        </div>
-        <div>
-          <span class="badge category-badge">{{ categoryLabel(subject.category) }}</span>
         </div>
         <div class="status-cell">
           <button
@@ -103,6 +94,14 @@
             {{ subject.priority.toUpperCase() }}
           </span>
         </div>
+        <div class="potential-cell">
+          <span class="potential-badge">{{ subject.confidenceScore }}</span>
+        </div>
+        <button class="row-menu" (click)="$event.preventDefault(); $event.stopPropagation()" aria-label="More options">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+            <circle cx="5" cy="12" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="19" cy="12" r="1.5"/>
+          </svg>
+        </button>
       </a>
     }
   </div>
