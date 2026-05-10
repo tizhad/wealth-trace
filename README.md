@@ -41,7 +41,7 @@ Link interview questions directly to the companies that asked them. Build a stud
 
 Track every job application with status, salary notes, and resume versioning.
 
-![Pulse Application Page](docs/grouped-subjects.png)
+![Pulse Application Page](docs/applications.png)
 
 ### Code Theme Switcher
 
