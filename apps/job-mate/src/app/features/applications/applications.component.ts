@@ -1,7 +1,28 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  signal,
+} from '@angular/core';
+import {
+  FormControl,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { ApplicationStore } from '../../core/stores/application.store';
 import { Application, AppStatus } from '../../core/models/jobmate.models';
+
+const AVATAR_PALETTE: ReadonlyArray<{ bg: string; color: string }> = [
+  { bg: '#1E7A47', color: '#ffffff' },
+  { bg: '#6B32B8', color: '#ffffff' },
+  { bg: '#1E5FA8', color: '#ffffff' },
+  { bg: '#B02B23', color: '#ffffff' },
+  { bg: '#2C3E50', color: '#ffffff' },
+  { bg: '#C0621A', color: '#ffffff' },
+  { bg: '#00838F', color: '#ffffff' },
+  { bg: '#A07C10', color: '#ffffff' },
+];
 
 @Component({
   selector: 'app-applications',
@@ -13,56 +34,31 @@ import { Application, AppStatus } from '../../core/models/jobmate.models';
 export class ApplicationsComponent {
   readonly store = inject(ApplicationStore);
 
-  readonly applicationsByStatus = computed(() => {
-    const apps = this.store.applications();
-    return {
-      saved: apps.filter(a => a.status === 'saved'),
-      applied: apps.filter(a => a.status === 'applied'),
-      phoneScreen: apps.filter(a => a.status === 'phone-screen'),
-      interviewing: apps.filter(a => a.status === 'interviewing'),
-      offer: apps.filter(a => a.status === 'offer'),
-      rejected: apps.filter(a => a.status === 'rejected'),
-    };
-  });
-
-  readonly columns: { key: string; label: string }[] = [
-    { key: 'saved', label: 'Saved' },
-    { key: 'applied', label: 'Applied' },
-    { key: 'phoneScreen', label: 'Phone screen' },
-    { key: 'interviewing', label: 'Interviewing' },
-    { key: 'offer', label: 'Offer 🎉' },
-    { key: 'rejected', label: 'Rejected' },
-  ];
-
   readonly statusOptions: { value: AppStatus; label: string }[] = [
     { value: 'saved', label: 'Saved' },
     { value: 'applied', label: 'Applied' },
     { value: 'phone-screen', label: 'Phone screen' },
     { value: 'interviewing', label: 'Interviewing' },
-    { value: 'offer', label: 'Offer' },
+    { value: 'offer', label: 'Offer 🎉' },
     { value: 'rejected', label: 'Rejected' },
   ];
+
+  /* ── Add drawer ────────────────────────────────────────────────────────── */
 
   readonly showForm = signal(false);
   readonly saving = signal(false);
   readonly tags = signal<string[]>([]);
-  readonly draggingId = signal<string | null>(null);
-  readonly dragOverCol = signal<string | null>(null);
-
-  private readonly colKeyToStatus: Record<string, AppStatus> = {
-    saved: 'saved',
-    applied: 'applied',
-    phoneScreen: 'phone-screen',
-    interviewing: 'interviewing',
-    offer: 'offer',
-    rejected: 'rejected',
-  };
-
   readonly tagInput = new FormControl('', { nonNullable: true });
 
   readonly form = new FormGroup({
-    title: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
-    company: new FormControl('', { nonNullable: true, validators: [Validators.required] }),
+    title: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    company: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
     location: new FormControl('', { nonNullable: true }),
     status: new FormControl<AppStatus>('saved', { nonNullable: true }),
     date: new FormControl(this.todayIso(), { nonNullable: true }),
@@ -82,9 +78,7 @@ export class ApplicationsComponent {
 
   addTag(): void {
     const tag = this.tagInput.value.trim();
-    if (tag && !this.tags().includes(tag)) {
-      this.tags.update((t) => [...t, tag]);
-    }
+    if (tag && !this.tags().includes(tag)) this.tags.update((t) => [...t, tag]);
     this.tagInput.reset();
   }
 
@@ -102,9 +96,9 @@ export class ApplicationsComponent {
   async submit(): Promise<void> {
     this.form.markAllAsTouched();
     if (this.form.invalid) return;
-
     this.saving.set(true);
-    const { title, company, location, status, date, salary } = this.form.getRawValue();
+    const { title, company, location, status, date, salary } =
+      this.form.getRawValue();
     await this.store.addApplication({
       title,
       company,
@@ -118,24 +112,96 @@ export class ApplicationsComponent {
     this.closeForm();
   }
 
-  colApps(key: string): Application[] {
-    return (this.applicationsByStatus() as Record<string, Application[]>)[key] ?? [];
+  /* ── Edit modal ────────────────────────────────────────────────────────── */
+
+  readonly selectedApp = signal<Application | null>(null);
+  readonly editTags = signal<string[]>([]);
+  readonly editTagInput = new FormControl('', { nonNullable: true });
+
+  readonly editForm = new FormGroup({
+    title: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    company: new FormControl('', {
+      nonNullable: true,
+      validators: [Validators.required],
+    }),
+    location: new FormControl('', { nonNullable: true }),
+    status: new FormControl<AppStatus>('saved', { nonNullable: true }),
+    date: new FormControl('', { nonNullable: true }),
+    salary: new FormControl('', { nonNullable: true }),
+  });
+
+  openModal(app: Application): void {
+    this.editForm.reset({
+      title: app.title,
+      company: app.company,
+      location: app.location ?? '',
+      status: app.status,
+      date: app.date,
+      salary: app.salary ?? '',
+    });
+    this.editTags.set([...app.tags]);
+    this.editTagInput.reset();
+    this.selectedApp.set(app);
   }
 
-  colClass(key: string): string {
-    const map: Record<string, string> = {
-      saved: 'col-saved',
-      applied: 'col-applied',
-      phoneScreen: 'col-phone',
-      interviewing: 'col-interview',
-      offer: 'col-offer',
-      rejected: 'col-rejected',
-    };
-    return map[key] ?? '';
+  closeModal(): void {
+    this.selectedApp.set(null);
   }
 
-  initial(company: string): string {
-    return company.charAt(0).toUpperCase();
+  addEditTag(): void {
+    const tag = this.editTagInput.value.trim();
+    if (tag && !this.editTags().includes(tag))
+      this.editTags.update((t) => [...t, tag]);
+    this.editTagInput.reset();
+  }
+
+  removeEditTag(tag: string): void {
+    this.editTags.update((t) => t.filter((x) => x !== tag));
+  }
+
+  onEditTagKeydown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' || event.key === ',') {
+      event.preventDefault();
+      this.addEditTag();
+    }
+  }
+
+  async saveModal(): Promise<void> {
+    this.editForm.markAllAsTouched();
+    if (this.editForm.invalid) return;
+    const app = this.selectedApp();
+    if (!app) return;
+    this.saving.set(true);
+    const { title, company, location, status, date, salary } =
+      this.editForm.getRawValue();
+    await this.store.updateApplication(app.id, {
+      title: title.trim(),
+      company: company.trim(),
+      location: location.trim() || null,
+      status,
+      date,
+      salary: salary.trim() || null,
+      tags: this.editTags(),
+    });
+    this.saving.set(false);
+    this.closeModal();
+  }
+
+  /* ── Helpers ───────────────────────────────────────────────────────────── */
+
+  initial(name: string): string {
+    return name.charAt(0).toUpperCase();
+  }
+
+  avatarBg(name: string): string {
+    return AVATAR_PALETTE[this.nameHash(name) % AVATAR_PALETTE.length].bg;
+  }
+
+  avatarColor(name: string): string {
+    return AVATAR_PALETTE[this.nameHash(name) % AVATAR_PALETTE.length].color;
   }
 
   statusClass(status: AppStatus): string {
@@ -150,42 +216,31 @@ export class ApplicationsComponent {
     return map[status];
   }
 
+  statusLabel(status: AppStatus): string {
+    const map: Record<AppStatus, string> = {
+      saved: 'Saved',
+      applied: 'Applied',
+      'phone-screen': 'Phone screen',
+      interviewing: 'Interviewing',
+      offer: 'Offer 🎉',
+      rejected: 'Rejected',
+    };
+    return map[status];
+  }
+
   formatDate(iso: string): string {
     if (!iso) return '';
-    const d = new Date(iso + 'T00:00:00');
-    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return new Date(iso + 'T00:00:00').toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+    });
   }
 
-  onDragStart(app: Application): void {
-    this.draggingId.set(app.id);
-  }
-
-  onDragEnd(): void {
-    this.draggingId.set(null);
-    this.dragOverCol.set(null);
-  }
-
-  onDragOver(event: DragEvent, colKey: string): void {
-    event.preventDefault();
-    this.dragOverCol.set(colKey);
-  }
-
-  onDragLeave(event: DragEvent, colKey: string): void {
-    const el = event.currentTarget as HTMLElement;
-    if (!el.contains(event.relatedTarget as Node) && this.dragOverCol() === colKey) {
-      this.dragOverCol.set(null);
-    }
-  }
-
-  onDrop(event: DragEvent, colKey: string): void {
-    event.preventDefault();
-    const id = this.draggingId();
-    const status = this.colKeyToStatus[colKey];
-    if (id && status) {
-      this.store.updateStatus(id, status);
-    }
-    this.draggingId.set(null);
-    this.dragOverCol.set(null);
+  private nameHash(name: string): number {
+    let h = 0;
+    for (let i = 0; i < name.length; i++)
+      h = (h * 31 + name.charCodeAt(i)) & 0x7fffffff;
+    return h;
   }
 
   private todayIso(): string {

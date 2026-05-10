@@ -20,90 +20,255 @@
     </button>
   </div>
 
-  <div class="kanban">
-    @for (col of columns; track col.key) {
-      <div class="kanban-col">
-        <div class="col-header">
-          <span class="col-dot" [class]="colClass(col.key)"></span>
-          <span class="col-title">{{ col.label }}</span>
-          <span class="col-count">{{ colApps(col.key).length }}</span>
+  <div class="apps-grid">
+    @for (app of store.applications(); track app.id) {
+      <div class="card app-card" (click)="openModal(app)">
+        <div class="app-top">
+          <div
+            class="app-avatar"
+            [style.background]="avatarBg(app.company)"
+            [style.color]="avatarColor(app.company)"
+          >
+            {{ initial(app.company) }}
+          </div>
+          <div class="app-info">
+            <span class="app-title">{{ app.title }}</span>
+            <span class="app-company">{{ app.company }}</span>
+          </div>
+          <span class="badge" [class]="statusClass(app.status)">{{
+            statusLabel(app.status)
+          }}</span>
         </div>
-        <div
-          class="col-cards"
-          [class.drag-over]="dragOverCol() === col.key"
-          (dragover)="onDragOver($event, col.key)"
-          (dragleave)="onDragLeave($event, col.key)"
-          (drop)="onDrop($event, col.key)"
-        >
-          @for (app of colApps(col.key); track app.id) {
-            <div
-              class="app-card card"
-              draggable="true"
-              [class.dragging]="draggingId() === app.id"
-              (dragstart)="onDragStart(app)"
-              (dragend)="onDragEnd()"
+
+        <div class="app-meta-row">
+          <span class="app-meta">
+            <svg
+              width="10"
+              height="10"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              viewBox="0 0 24 24"
             >
-              <div class="app-top">
-                <div class="app-avatar">{{ initial(app.company) }}</div>
-                <div class="app-info">
-                  <span class="app-title">{{ app.title }}</span>
-                  <span class="app-company">{{ app.company }}</span>
-                </div>
-              </div>
-              @if (app.salary) {
-                <div class="app-salary">{{ app.salary }}</div>
-              }
-              <div class="app-meta-row">
-                <span class="app-meta">
-                  <svg
-                    width="10"
-                    height="10"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <rect x="3" y="4" width="18" height="18" rx="2" />
-                    <line x1="16" y1="2" x2="16" y2="6" />
-                    <line x1="8" y1="2" x2="8" y2="6" />
-                    <line x1="3" y1="10" x2="21" y2="10" />
-                  </svg>
-                  {{ formatDate(app.date) }}
-                </span>
-                <span class="app-meta">
-                  <svg
-                    width="10"
-                    height="10"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    viewBox="0 0 24 24"
-                  >
-                    <circle cx="12" cy="10" r="3" />
-                    <path
-                      d="M12 2a8 8 0 0 0-8 8c0 5.25 8 14 8 14s8-8.75 8-14a8 8 0 0 0-8-8z"
-                    />
-                  </svg>
-                  {{ app.location }}
-                </span>
-              </div>
-              @if (app.tags.length) {
-                <div class="app-tags">
-                  @for (tag of app.tags; track tag) {
-                    <span class="app-tag">{{ tag }}</span>
-                  }
-                </div>
-              }
-            </div>
-          }
-          @if (colApps(col.key).length === 0) {
-            <div class="col-empty">No applications</div>
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+            {{ formatDate(app.date) }}
+          </span>
+          @if (app.location) {
+            <span class="app-meta">
+              <svg
+                width="10"
+                height="10"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                viewBox="0 0 24 24"
+              >
+                <circle cx="12" cy="10" r="3" />
+                <path
+                  d="M12 2a8 8 0 0 0-8 8c0 5.25 8 14 8 14s8-8.75 8-14a8 8 0 0 0-8-8z"
+                />
+              </svg>
+              {{ app.location }}
+            </span>
           }
         </div>
+
+        @if (app.salary) {
+          <div class="app-salary">{{ app.salary }}</div>
+        }
+
+        @if (app.tags.length) {
+          <div class="app-tags">
+            @for (tag of app.tags; track tag) {
+              <span class="app-tag">{{ tag }}</span>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    @if (store.applications().length === 0) {
+      <div class="empty-state">
+        <div class="empty-icon">📋</div>
+        <div class="empty-title">No applications yet</div>
+        <p class="empty-body">
+          Start tracking your job search by adding your first application.
+        </p>
+        <button class="btn-primary" (click)="openForm()">
+          Add your first application
+        </button>
       </div>
     }
   </div>
 </div>
+
+<!-- ── Edit modal ──────────────────────────────────────────────────────────── -->
+
+@if (selectedApp(); as app) {
+  <div
+    class="modal-backdrop"
+    tabindex="-1"
+    (click)="closeModal()"
+    (keydown.escape)="closeModal()"
+  ></div>
+
+  <div class="modal" role="dialog" aria-modal="true" [formGroup]="editForm">
+    <div class="modal-header">
+      <div class="modal-header-left">
+        <div
+          class="modal-avatar"
+          [style.background]="avatarBg(app.company)"
+          [style.color]="avatarColor(app.company)"
+        >
+          {{ initial(app.company) }}
+        </div>
+        <span class="modal-title">Edit application</span>
+      </div>
+      <button class="drawer-close" (click)="closeModal()" aria-label="Close">
+        <svg
+          width="16"
+          height="16"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          viewBox="0 0 24 24"
+        >
+          <line x1="18" y1="6" x2="6" y2="18" />
+          <line x1="6" y1="6" x2="18" y2="18" />
+        </svg>
+      </button>
+    </div>
+
+    <div class="modal-body">
+      <div class="field">
+        <label class="field-label" for="edit-title"
+          >Job title <span class="required">*</span></label
+        >
+        <input
+          id="edit-title"
+          class="field-input"
+          type="text"
+          placeholder="e.g. Senior Frontend Engineer"
+          formControlName="title"
+        />
+        @if (
+          editForm.controls.title.touched &&
+          editForm.controls.title.hasError('required')
+        ) {
+          <span class="field-error">Required</span>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="edit-company"
+          >Company <span class="required">*</span></label
+        >
+        <input
+          id="edit-company"
+          class="field-input"
+          type="text"
+          placeholder="e.g. Notion"
+          formControlName="company"
+        />
+        @if (
+          editForm.controls.company.touched &&
+          editForm.controls.company.hasError('required')
+        ) {
+          <span class="field-error">Required</span>
+        }
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="edit-status">Status</label>
+        <select id="edit-status" class="field-input" formControlName="status">
+          @for (opt of statusOptions; track opt.value) {
+            <option [value]="opt.value">{{ opt.label }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field-row">
+        <div class="field">
+          <label class="field-label" for="edit-location">Location</label>
+          <input
+            id="edit-location"
+            class="field-input"
+            type="text"
+            placeholder="e.g. Remote"
+            formControlName="location"
+          />
+        </div>
+        <div class="field">
+          <label class="field-label" for="edit-date">Date</label>
+          <input
+            id="edit-date"
+            class="field-input"
+            type="date"
+            formControlName="date"
+          />
+        </div>
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="edit-salary">Salary</label>
+        <input
+          id="edit-salary"
+          class="field-input"
+          type="text"
+          placeholder="e.g. $180k"
+          formControlName="salary"
+        />
+      </div>
+
+      <div class="field">
+        <label class="field-label" for="edit-tags">Tags</label>
+        <div class="tag-input-wrap">
+          @for (tag of editTags(); track tag) {
+            <span class="tag-chip">
+              {{ tag }}
+              <button
+                type="button"
+                class="tag-remove"
+                (click)="removeEditTag(tag)"
+              >
+                ×
+              </button>
+            </span>
+          }
+          <input
+            id="edit-tags"
+            class="tag-input"
+            type="text"
+            placeholder="Add tag, press Enter"
+            [formControl]="editTagInput"
+            (keydown)="onEditTagKeydown($event)"
+            (blur)="addEditTag()"
+          />
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn-ghost" (click)="closeModal()">
+        Cancel
+      </button>
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="saveModal()"
+        [disabled]="saving()"
+      >
+        {{ saving() ? 'Saving…' : 'Save' }}
+      </button>
+    </div>
+  </div>
+}
+
+<!-- ── New application drawer ──────────────────────────────────────────────── -->
 
 @if (showForm()) {
   <div
@@ -116,7 +281,7 @@
   <div class="drawer" [formGroup]="form">
     <div class="drawer-header">
       <span class="drawer-title">New application</span>
-      <button class="drawer-close" (click)="closeForm()">
+      <button class="drawer-close" (click)="closeForm()" aria-label="Close">
         <svg
           width="16"
           height="16"
@@ -172,9 +337,7 @@
 
       <div class="field-row">
         <div class="field">
-          <label class="field-label" for="app-location"
-            >Location <span class="required">*</span></label
-          >
+          <label class="field-label" for="app-location">Location</label>
           <input
             id="app-location"
             class="field-input"
@@ -243,7 +406,12 @@
       <button type="button" class="btn-ghost" (click)="closeForm()">
         Cancel
       </button>
-      <button type="button" class="btn-primary" (click)="submit()" [disabled]="saving()">
+      <button
+        type="button"
+        class="btn-primary"
+        (click)="submit()"
+        [disabled]="saving()"
+      >
         {{ saving() ? 'Saving…' : 'Add application' }}
       </button>
     </div>

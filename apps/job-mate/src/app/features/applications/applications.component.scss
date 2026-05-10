@@ -1,8 +1,6 @@
 .page {
   padding: 2rem;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
+  max-width: 960px;
 }
 
 .page-header {
@@ -10,7 +8,6 @@
   align-items: flex-start;
   justify-content: space-between;
   margin-bottom: 1.5rem;
-  flex-shrink: 0;
 }
 
 .page-title {
@@ -26,77 +23,12 @@
   margin-top: 2px;
 }
 
-/* ── Kanban ──────────────────────────────────────────────────────────────── */
+/* ── Grid ────────────────────────────────────────────────────────────────── */
 
-.kanban {
-  display: flex;
+.apps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 1rem;
-  overflow-x: auto;
-  flex: 1;
-  padding-bottom: 1rem;
-}
-
-.kanban-col {
-  min-width: 220px;
-  width: 220px;
-  flex-shrink: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.col-header {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 0 2px 6px;
-  border-bottom: 0.5px solid var(--border);
-}
-
-.col-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  flex-shrink: 0;
-
-  &.col-saved      { background: var(--pipe-saved); }
-  &.col-applied    { background: var(--pipe-applied); }
-  &.col-phone      { background: var(--pipe-phone); }
-  &.col-interview  { background: var(--pipe-interview); }
-  &.col-offer      { background: var(--pipe-offer); }
-  &.col-rejected   { background: var(--pipe-rejected); }
-}
-
-.col-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text);
-  flex: 1;
-}
-
-.col-count {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--text-muted);
-  background: var(--surface-hover);
-  border: 0.5px solid var(--border);
-  border-radius: 999px;
-  padding: 1px 7px;
-}
-
-.col-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  flex: 1;
-  border-radius: var(--radius-sm);
-  transition: background var(--transition), outline-color var(--transition);
-
-  &.drag-over {
-    background: var(--accent-light);
-    outline: 1.5px dashed var(--accent);
-    outline-offset: 2px;
-  }
 }
 
 /* ── App card ────────────────────────────────────────────────────────────── */
@@ -104,49 +36,74 @@
 .app-card {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 0.875rem;
-  cursor: grab;
+  gap: 10px;
+  border-radius: 20px;
+  box-shadow: var(--shadow-card);
+  cursor: pointer;
+  transition: transform var(--transition), box-shadow var(--transition);
 
-  &:hover { border-color: var(--accent); }
-
-  &.dragging {
-    opacity: 0.4;
-    cursor: grabbing;
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-pop);
   }
 }
 
 .app-top {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 12px;
 }
 
 .app-avatar {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
-  background: var(--accent-light);
-  color: var(--accent);
-  font-size: 12px;
-  font-weight: 700;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  font-size: 18px;
+  font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.app-info { display: flex; flex-direction: column; }
+.app-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  overflow: hidden;
+  min-width: 0;
+}
 
 .app-title {
-  font-size: 13px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   color: var(--text);
-  line-height: 1.3;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.2;
 }
 
 .app-company {
-  font-size: 11.5px;
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.app-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.app-meta {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
   color: var(--text-muted);
 }
 
@@ -161,20 +118,6 @@
   width: fit-content;
 }
 
-.app-meta-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.app-meta {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 11px;
-  color: var(--text-muted);
-}
-
 .app-tags { display: flex; flex-wrap: wrap; gap: 4px; }
 
 .app-tag {
@@ -182,20 +125,115 @@
   color: var(--text-secondary);
   background: var(--surface-hover);
   border: 0.5px solid var(--border);
-  border-radius: 4px;
-  padding: 1px 6px;
+  border-radius: 999px;
+  padding: 1px 7px;
 }
 
-.col-empty {
-  font-size: 12px;
-  color: var(--text-muted);
+/* ── Empty state ─────────────────────────────────────────────────────────── */
+
+.empty-state {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  padding: 1rem 0;
-  border: 0.5px dashed var(--border);
-  border-radius: var(--radius-sm);
+  padding: 4rem 2rem;
+  gap: 0.75rem;
 }
 
-/* ── Drawer ──────────────────────────────────────────────────────────────── */
+.empty-icon { font-size: 2.5rem; }
+
+.empty-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.empty-body {
+  font-size: 13px;
+  color: var(--text-muted);
+  max-width: 340px;
+  line-height: 1.5;
+}
+
+/* ── Edit modal ──────────────────────────────────────────────────────────── */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 200;
+}
+
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 480px;
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 4rem);
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--radius);
+  display: flex;
+  flex-direction: column;
+  z-index: 201;
+  box-shadow: var(--shadow-pop);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.25rem 1.5rem;
+  border-bottom: 0.5px solid var(--border);
+  flex-shrink: 0;
+}
+
+.modal-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.modal-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.modal-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 1rem 1.5rem;
+  border-top: 0.5px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ── New application drawer ──────────────────────────────────────────────── */
 
 .drawer-backdrop {
   position: fixed;
@@ -246,10 +284,7 @@
   cursor: pointer;
   transition: background var(--transition);
 
-  &:hover {
-    background: var(--surface-hover);
-    color: var(--text);
-  }
+  &:hover { background: var(--surface-hover); color: var(--text); }
 }
 
 .drawer-body {
@@ -260,6 +295,17 @@
   flex-direction: column;
   gap: 1.25rem;
 }
+
+.drawer-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 1rem 1.5rem;
+  border-top: 0.5px solid var(--border);
+  flex-shrink: 0;
+}
+
+/* ── Shared form styles ──────────────────────────────────────────────────── */
 
 .field-row {
   display: grid;
@@ -279,9 +325,7 @@
   color: var(--text-secondary);
 }
 
-.required {
-  color: var(--pipe-rejected);
-}
+.required { color: var(--pipe-rejected); }
 
 .field-input {
   height: 36px;
@@ -295,7 +339,6 @@
   transition: border-color var(--transition);
 
   &:focus { border-color: var(--accent); }
-
   &.ng-touched.ng-invalid { border-color: var(--pipe-rejected); }
 }
 
@@ -305,8 +348,6 @@ select.field-input { cursor: pointer; }
   font-size: 11.5px;
   color: var(--pipe-rejected);
 }
-
-/* ── Tag chip input ──────────────────────────────────────────────────────── */
 
 .tag-input-wrap {
   display: flex;
@@ -357,17 +398,6 @@ select.field-input { cursor: pointer; }
   color: var(--text);
 
   &::placeholder { color: var(--text-muted); }
-}
-
-/* ── Drawer footer ───────────────────────────────────────────────────────── */
-
-.drawer-footer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 8px;
-  padding: 1rem 1.5rem;
-  border-top: 0.5px solid var(--border);
-  flex-shrink: 0;
 }
 
 .btn-ghost {
